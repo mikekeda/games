@@ -5,7 +5,7 @@ Django settings for games project.
 import os
 import requests
 
-SITE_ENV_PREFIX = 'TOOLS'
+SITE_ENV_PREFIX = 'GAMES'
 
 
 def get_env_var(name, default=''):
