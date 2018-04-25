@@ -154,7 +154,7 @@ USE_TZ = True
 
 STATIC_ROOT = '/home/voron/sites/cdn/games'
 
-STATIC_URL = '/static/'
+STATIC_URL = '/static/' if DEBUG else 'https://cdn.mkeda.me/games/'
 
 STATICFILES_DIRS = (
     ('', os.path.join(BASE_DIR, 'static')),
