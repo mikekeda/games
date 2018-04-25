@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Change me" %}{% endblock title %}
+
+{% block content %}
+  <div class="container">
+    <div class="jumbotron bg-white games-container">
+      <h1>My games:</h1>
+        {% for game in games %}
+          <div class="game-item col-md-3">
+            <h2><a href="{% url 'core:game' game.game game.pk %}">{{ game.rules.title }}</a></h2>
+            {% include game.game|add:".html" %}
+          </div>
+        {% endfor %}
+    </div>
+  </div>
+{% endblock content %}

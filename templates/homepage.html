@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static from staticfiles %}
+{% load i18n %}
+
+{% block title %}{% trans "Change me" %}{% endblock title %}
+
+{% block content %}
+  <div class="container">
+    <div class="jumbotron bg-white">
+    {% for game in games %}
+      <div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="{% static 'img/'|add:game.title|add:'.svg' %}" alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title">{% trans game.title %}</h5>
+          <p class="card-text">{% trans game.description %}</p>
+          <a href="{% url 'core:games' game.class %}" class="btn btn-primary">{% trans "Play" %}</a>
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+  </div>
+{% endblock content %}

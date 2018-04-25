@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Change me" %}{% endblock title %}
+
+{% block content %}
+  <div class="container">
+    <div class="jumbotron bg-white">
+      <h1>{{ game.board.title }}</h1>
+        {% include game.game|add:".html" %}
+    </div>
+  </div>
+{% endblock content %}
