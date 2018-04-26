@@ -8,7 +8,7 @@ GAMES = (
 GAMES_INFO = (
     {
         'title': "Tic-tac-toe",
-        'class': "TicTacToe",
+        'classname': "TicTacToe",
         'description': "Tic-tac-toe (also known as noughts and crosses or " +
                        "Xs and Os) is a paper-and-pencil game for two " +
                        "players, X and O, who take turns marking the " +

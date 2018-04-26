@@ -13,7 +13,7 @@
         <div class="card-body">
           <h5 class="card-title">{% trans game.title %}</h5>
           <p class="card-text">{% trans game.description %}</p>
-          <a href="{% url 'core:games' game.class %}" class="btn btn-primary">{% trans "Play" %}</a>
+          <a href="{% url 'core:new_game' game.classname %}" class="btn btn-primary">{% trans "Play" %}</a>
         </div>
       </div>
     {% endfor %}
