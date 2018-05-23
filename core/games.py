@@ -105,10 +105,10 @@ class TicTacToe:
 
     @classmethod
     def render_board(cls, board):
-        for i in range(len(board)):
+        for i, row in enumerate(board):
             board[i] = [
                 cls.render_values_map.get(cell, cell)
-                for cell in board[i]
+                for cell in row
             ]
 
         return board

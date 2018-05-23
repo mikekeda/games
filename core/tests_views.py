@@ -39,7 +39,7 @@ class GamesViewTest(TestCase):
         self.client.login(username='testuser', password='12345')
         for game in GAMES_INFO:
             resp = self.client.get(reverse('core:new_game',
-                                   kwargs={'name': game['classname']}))
+                                           kwargs={'name': game['classname']}))
             self.assertEqual(resp.status_code, 200)
             self.assertTemplateUsed(resp, 'homepage.html')
 
