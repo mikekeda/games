@@ -12,6 +12,7 @@ mccabe==0.6.1
 opbeat==3.6.1
 pep8==1.7.1
 psycopg2==2.7.4
+psycopg2-binary==2.7.4
 pyflakes==2.0.0
 pylint==1.9.1
 pylint-django==0.11
