@@ -67,6 +67,8 @@ def my_games(request, name=None):
     games = Game.objects.filter(players=request.user)
     if name:
         games = games.filter(game=name)
-    games = list(games)
+
+    for game in games:
+        game.board = game.rules.render_board(game.board)
 
     return render(request, "games.html", {'games': games})
