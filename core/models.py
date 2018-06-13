@@ -1,4 +1,8 @@
+from copy import deepcopy
 from datetime import datetime
+
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
@@ -9,6 +13,7 @@ from django.forms import Textarea
 
 import core.games
 
+channel_layer = get_channel_layer()
 User = get_user_model()
 
 
@@ -48,7 +53,7 @@ class Game(models.Model):
         self.rules = None
         if self.game:
             self.rules = getattr(core.games, self.game)
-            self.board = self.board or self.rules.board
+            self.board = self.board or deepcopy(self.rules.board)
 
     def clean(self):
         super().clean()
@@ -61,7 +66,7 @@ class Game(models.Model):
              update_fields=None):
         if not self.pk:
             self.rules = getattr(core.games, self.game)
-            self.board = self.rules.board
+            self.board = deepcopy(self.rules.board)
 
         self.current_turn = self.rules.who_is_going_to_move(self.board)
 
@@ -69,6 +74,18 @@ class Game(models.Model):
             self.completed = datetime.now()
 
         super().save(force_insert, force_update, using, update_fields)
+
+        # Update the game board via websockets.
+        async_to_sync(channel_layer.group_send)(
+            'game-{}'.format(str(self.pk)),
+            {
+                'type': 'game.update',
+                'content': {
+                    'board': self.rules.render_board(self.board),
+                    'pk': self.pk
+                }
+            }
+        )
 
     def __str__(self):
         return '{}: {}'.format(self.game, self.pk)

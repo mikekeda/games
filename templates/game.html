@@ -11,3 +11,34 @@
     </div>
   </div>
 {% endblock content %}
+
+{% block script %}
+  <script>
+    var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+    var socket = new WebSocket(protocol + '://' + window.location.host + '/ws/game/' + {{ game.id }});
+    var user = {{ user.pk }};
+    var $board = $('table.board');
+    var raw_board;
+    var i;
+    var j;
+
+    $board.find('td:empty').click(function() {
+      socket.send(JSON.stringify({
+        move: this.id
+      }));
+    });
+
+    socket.onmessage = function message(event) {
+      raw_data = JSON.parse(event.data);
+      for (i = 0; i < raw_data.board.length; i++) {
+        for (j = 0; j < raw_data.board[i].length; j++) {
+          $board.find('td#' + i + '-' + j).html(raw_data.board[i][j]);
+        }
+      }
+    };
+
+    if (socket.readyState == WebSocket.OPEN) {
+      socket.onopen();
+    }
+  </script>
+{% endblock script %}

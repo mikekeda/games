@@ -1,4 +1,5 @@
 from collections import Counter
+from copy import deepcopy
 
 GAMES = (
     ('TicTacToe', 'Tic-tac-toe'),
@@ -54,7 +55,8 @@ class TicTacToe:
 
     @classmethod
     def is_valid_move(cls, board, player, row, col):
-        if board[row][col] != cls.cell_empty_value:
+        if board[row][col] != cls.cell_empty_value or \
+                cls.who_is_winner(board) is not None:
             return False
 
         board[row][col] = cls.cell_values[player]
@@ -98,7 +100,7 @@ class TicTacToe:
 
     @classmethod
     def move(cls, board, player, row, col):
-        if cls.is_valid_move(board, player, row, col):
+        if cls.is_valid_move(deepcopy(board), player, row, col):
             board[row][col] = cls.cell_values[player]
 
         return board
