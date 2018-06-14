@@ -21,27 +21,34 @@
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
+      {% url 'core:homepage' as homepage_url %}
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'core:homepage' %}">Home <span class="sr-only">(current)</span></a>
+        <a class="nav-link {% if request.get_full_path == homepage_url %}active{% endif %}" href="{{ homepage_url }}">Home <span class="sr-only">(current)</span></a>
       </li>
       {% if user.is_authenticated %}
+      {% url 'core:my_games' as my_games_url %}
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'core:my_games' %}">{% trans 'My games' %}</a>
+        <a class="nav-link {% if request.get_full_path == my_games_url %}active{% endif %}" href="{{ my_games_url }}">{% trans 'My games' %}</a>
       </li>
       {% endif %}
+      {% url 'core:about' as about_url %}
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'core:about' %}">{% trans 'About' %}</a>
+        <a class="nav-link {% if request.get_full_path == about_url %}active{% endif %}" href="{{ about_url }}">{% trans 'About' %}</a>
       </li>
     </ul>
 
     <ul class="navbar-nav mr-right">
       {% if user.is_authenticated %}
       <li class="nav-item">
+        <a class="nav-link" href="#">{{ user.username }}</a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" href="{% url 'core:logout' %}">{% trans "Log out" %}</a>
       </li>
       {% else %}
+      {% url 'core:login' as login_url %}
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'core:login' %}">{% trans "Log in" %}</a>
+        <a class="nav-link {% if request.get_full_path == login_url %}active{% endif %}" href="{{ login_url }}">{% trans "Log in" %}</a>
       </li>
       {% endif %}
     </ul>
