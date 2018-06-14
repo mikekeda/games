@@ -6,7 +6,7 @@
 {% block content %}
   <div class="container">
     <div class="jumbotron bg-white">
-      <h1>{{ game.board.title }}</h1>
+      <h1>{{ game.pk }}: {{ game.rules.title }}</h1>
         {% include game.game|add:".html" %}
     </div>
   </div>

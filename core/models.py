@@ -88,7 +88,7 @@ class Game(models.Model):
         )
 
     def __str__(self):
-        return '{}: {}'.format(self.game, self.pk)
+        return '{}: {}'.format(self.pk, self.game)
 
 
 def players_changed(sender, **kwargs):
