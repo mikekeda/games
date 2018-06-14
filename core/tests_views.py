@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
@@ -28,6 +29,39 @@ class GamesViewTest(TestCase):
         resp = self.client.get(reverse('core:homepage'))
         self.assertEqual(resp.status_code, 200)
         self.assertTemplateUsed(resp, 'homepage.html')
+
+    # Pages available for anonymous.
+    def test_views_about(self):
+        resp = self.client.get(reverse('core:about'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertTemplateUsed(resp, 'about.html')
+
+    def test_views_login(self):
+        resp = self.client.get(reverse('core:login'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertTemplateUsed(resp, 'login.html')
+
+        # Try to login again (fail).
+        self.client.login(username='testuser', password='12345')
+        resp = self.client.get(reverse('core:login'))
+        self.assertRedirects(resp, reverse(settings.LOGIN_REDIRECT_URL))
+
+    def test_views_signup(self):
+        resp = self.client.get(reverse('core:signup'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertTemplateUsed(resp, 'signup.html')
+
+        # Try to login again (fail).
+        self.client.login(username='testuser', password='12345')
+        resp = self.client.get(reverse('core:signup'))
+        self.assertRedirects(resp, reverse(settings.LOGIN_REDIRECT_URL))
+
+    def test_views_logout(self):
+        resp = self.client.get(reverse('core:logout'))
+        self.assertRedirects(resp, '/login?next=/logout')
+        self.client.login(username='testuser', password='12345')
+        resp = self.client.get(reverse('core:logout'))
+        self.assertRedirects(resp, reverse('core:login'))
 
     # Pages available only for registered users.
     def test_views_new_game(self):

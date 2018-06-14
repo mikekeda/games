@@ -1,5 +1,7 @@
-from django.contrib.auth import get_user_model
+from django.conf import settings
+from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
@@ -72,3 +74,47 @@ def my_games(request, name=None):
         game.board = game.rules.render_board(game.board)
 
     return render(request, "games.html", {'games': games})
+
+
+def about_page(request):
+    """ About page. """
+    return render(request, 'about.html')
+
+
+def log_in(request):
+    if request.user.is_authenticated:
+        return redirect(settings.LOGIN_REDIRECT_URL)
+
+    form = AuthenticationForm()
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            login(request, form.get_user())
+            return redirect(reverse(settings.LOGIN_REDIRECT_URL))
+
+    return render(request, 'login.html', {'form': form})
+
+
+@login_required
+def log_out(request):
+    logout(request)
+    return redirect(reverse(settings.LOGIN_URL))
+
+
+def sign_up(request):
+    if request.user.is_authenticated:
+        return redirect(settings.LOGIN_REDIRECT_URL)
+    form = UserCreationForm()
+    if request.method == 'POST':
+        form = UserCreationForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            user = authenticate(
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password1']
+            )
+            login(request, user)
+
+            return redirect(reverse(settings.LOGIN_REDIRECT_URL))
+
+    return render(request, 'signup.html', {'form': form})

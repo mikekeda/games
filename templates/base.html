@@ -21,24 +21,27 @@
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
+      <li class="nav-item">
         <a class="nav-link" href="{% url 'core:homepage' %}">Home <span class="sr-only">(current)</span></a>
       </li>
       {% if user.is_authenticated %}
-      <li class="nav-item active">
+      <li class="nav-item">
         <a class="nav-link" href="{% url 'core:my_games' %}">{% trans 'My games' %}</a>
       </li>
       {% endif %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'core:about' %}">{% trans 'About' %}</a>
+      </li>
     </ul>
 
     <ul class="navbar-nav mr-right">
       {% if user.is_authenticated %}
       <li class="nav-item">
-        <a class="nav-link" href="/admin/logout/">{% trans "Log out" %}</a>
+        <a class="nav-link" href="{% url 'core:logout' %}">{% trans "Log out" %}</a>
       </li>
       {% else %}
       <li class="nav-item">
-        <a class="nav-link" href="/admin/">{% trans "Log in" %}</a>
+        <a class="nav-link" href="{% url 'core:login' %}">{% trans "Log in" %}</a>
       </li>
       {% endif %}
     </ul>
