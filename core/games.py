@@ -68,6 +68,7 @@ class TicTacToe:
 
     @classmethod
     def who_is_winner(cls, board):
+        """ Figure out who is the winner. -1 - means it's a draw. """
         for row in board:
             if row[0] != cls.cell_empty_value and \
                     all(cell == row[0] for cell in row[1:]):
@@ -87,6 +88,14 @@ class TicTacToe:
                 for i in range(1, cls.rows)
         ):
             return cls.cell_values.index(board[cls.rows - 1][0])
+
+        if all(
+                board[i][j] != cls.cell_empty_value
+                for i in range(cls.rows)
+                for j in range(cls.cols)
+        ):
+            # Check a draw.
+            return -1
 
         return None
 

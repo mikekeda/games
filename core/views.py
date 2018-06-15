@@ -57,11 +57,18 @@ class GameView(LoginRequiredMixin, View):
         if game_class is None:
             raise Http404
 
-        game = get_object_or_404(Game.objects.prefetch_related('players'),
-                                 pk=pk)
+        game = get_object_or_404(Game, pk=pk)
+        players = [user.username for user in game.players.all()]
+        user_turn = players[game.rules.who_is_going_to_move(game.board)]
+        winner = game.rules.who_is_winner(game.board)
         game.board = game.rules.render_board(game.board)
 
-        return render(request, "game.html", {'game': game})
+        return render(request, "game.html", {
+            'game': game,
+            'players': players,
+            'user_turn': user_turn,
+            'winner': players[winner] if winner not in (None, -1) else winner
+        })
 
 
 @login_required

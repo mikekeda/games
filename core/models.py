@@ -70,7 +70,8 @@ class Game(models.Model):
 
         self.current_turn = self.rules.who_is_going_to_move(self.board)
 
-        if self.rules.who_is_winner(self.board) is not None:
+        winner = self.rules.who_is_winner(self.board)
+        if winner is not None:
             self.completed = datetime.now()
 
         super().save(force_insert, force_update, using, update_fields)
@@ -82,6 +83,8 @@ class Game(models.Model):
                 'type': 'game.update',
                 'content': {
                     'board': self.rules.render_board(self.board),
+                    'turn': self.current_turn,
+                    'winner': winner,
                     'pk': self.pk
                 }
             }

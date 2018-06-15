@@ -6,8 +6,13 @@
 {% block content %}
   <div class="container">
     <div class="jumbotron bg-white">
-      <h1>{{ game.pk }}: {{ game.rules.title }}</h1>
-        {% include game.game|add:".html" %}
+      <h1 class="mb-4">{{ game.pk }}: {{ game.rules.title }} ({{ players|join:" vs " }})</h1>
+      {% include game.game|add:".html" %}
+      <div id="info" class="mt-2 text-muted">
+        <p class="waiting" style="{% if winner != None %}display: none;{% endif %}">{% trans "Waiting for" %} <a id="who_is_going_to_move" href="#">{{ user_turn }}</a> {% trans "move" %}</p>
+        <p class="draft" style="{% if winner != -1 %}display: none;{% endif %}">{% trans "It's a draft. Game is over!" %}</p>
+        <p class="winner" style="{% if winner == None or winner == -1 %}display: none;{% endif %}"><a id="winner" href="#">{{ winner }}</a> {% trans "win! Game is over!" %}</p>
+      </div>
     </div>
   </div>
 {% endblock content %}
@@ -17,7 +22,9 @@
     var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
     var socket = new WebSocket(protocol + '://' + window.location.host + '/ws/game/' + {{ game.id }});
     var user = {{ user.pk }};
+    var players = {{ players|safe }}
     var $board = $('table.board');
+    var $info = $('#info');
     var raw_board;
     var i;
     var j;
@@ -34,6 +41,19 @@
         for (j = 0; j < raw_data.board[i].length; j++) {
           $board.find('td#' + i + '-' + j).html(raw_data.board[i][j]);
         }
+      }
+
+      $info.children('p').hide();
+      if (raw_data.winner === null) {
+        $info.find('#who_is_going_to_move').text(players[raw_data.turn]);
+        $info.children('p.waiting').show();
+      }
+      else if (raw_data.winner === -1) {
+        $info.children('p.draft').show();
+      }
+      else {
+        $info.find('#winner').text(players[raw_data.winner]);
+        $info.children('p.winner').show();
       }
     };
 
