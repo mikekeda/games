@@ -115,6 +115,13 @@ class TicTacToe:
         return board
 
     @classmethod
+    def available_moves(cls, board):
+        for i in range(cls.rows):
+            for j in range(cls.cols):
+                if board[i][j] == cls.cell_empty_value:
+                    yield i, j
+
+    @classmethod
     def render_board(cls, board):
         for i, row in enumerate(board):
             board[i] = [
