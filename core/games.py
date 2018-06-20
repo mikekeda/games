@@ -55,6 +55,9 @@ class TicTacToe:
 
     @classmethod
     def is_valid_move(cls, board, player, row, col):
+        if any([row < 0, row >= cls.rows, col < 0, col >= cls.cols]):
+            return False
+
         if board[row][col] != cls.cell_empty_value or \
                 cls.who_is_winner(board) is not None:
             return False
