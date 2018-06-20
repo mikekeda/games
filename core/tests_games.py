@@ -4,10 +4,6 @@ from .games import TicTacToe
 
 
 class TicTacToeTest(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-
     def test_is_board_valid(self):
         self.assertTupleEqual(TicTacToe.is_board_valid([
             ['*', '*', '*'],
@@ -84,9 +80,21 @@ class TicTacToeTest(TestCase):
         ]), 0)
 
         self.assertEqual(TicTacToe.who_is_winner([
+            ['X', '*', 'O'],
+            ['X', 'O', '*'],
+            ['X', '*', '*'],
+        ]), 0)
+
+        self.assertEqual(TicTacToe.who_is_winner([
             ['X', 'X', 'O'],
             ['*', 'O', '*'],
             ['O', 'X', 'X'],
+        ]), 1)
+
+        self.assertEqual(TicTacToe.who_is_winner([
+            ['O', 'X', 'X'],
+            ['*', 'O', '*'],
+            ['X', 'X', 'O'],
         ]), 1)
 
         self.assertEqual(TicTacToe.who_is_winner([

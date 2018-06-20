@@ -1,10 +1,12 @@
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
 from .games import GAMES_INFO
 from .models import Game
+
+User = get_user_model()
 
 
 class GamesViewTest(TestCase):
