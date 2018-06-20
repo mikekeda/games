@@ -153,6 +153,7 @@ CELERY_TIMEZONE = 'UTC'
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
+CSRF_COOKIE_SECURE = True
 
 
 CHANNEL_LAYERS = {
