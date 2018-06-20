@@ -10,7 +10,7 @@ from .models import Game
 class GamesViewTest(TestCase):
     @classmethod
     def setUpClass(cls):
-        super(GamesViewTest, cls).setUpClass()
+        super().setUpClass()
 
         # Create usual user.
         cls.test_user = User.objects.create_user(username='testuser',
@@ -80,8 +80,15 @@ class GamesViewTest(TestCase):
     def test_views_my_games(self):
         resp = self.client.get(reverse('core:my_games'))
         self.assertEqual(resp.status_code, 302)
+
         self.client.login(username='testuser', password='12345')
+
         resp = self.client.get(reverse('core:my_games'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertTemplateUsed(resp, 'games.html')
+
+        resp = self.client.get(reverse('core:my_specific_games', kwargs={
+            'name': 'dummy'}))
         self.assertEqual(resp.status_code, 200)
         self.assertTemplateUsed(resp, 'games.html')
 
@@ -89,7 +96,13 @@ class GamesViewTest(TestCase):
         resp = self.client.get(reverse('core:game', kwargs={
             'name': self.test_game.game, 'pk': self.test_game.pk}))
         self.assertEqual(resp.status_code, 302)
+
         self.client.login(username='testuser', password='12345')
+
+        resp = self.client.get(reverse('core:game', kwargs={
+            'name': 'not-exists', 'pk': self.test_game.pk}))
+        self.assertEqual(resp.status_code, 404)
+
         resp = self.client.get(reverse('core:game', kwargs={
             'name': self.test_game.game, 'pk': self.test_game.pk}))
         self.assertEqual(resp.status_code, 200)
