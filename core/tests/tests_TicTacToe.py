@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from .games import TicTacToe
+from core.games.TicTacToe import TicTacToe
 
 
 class TicTacToeTest(TestCase):

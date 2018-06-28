@@ -1,40 +1,24 @@
 from collections import Counter
 from copy import deepcopy
 
-GAMES = (
-    ('TicTacToe', 'Tic-tac-toe'),
-)
+from core.games.Game import Game, GAMES_INFO
 
 
-GAMES_INFO = (
-    {
-        'title': "Tic-tac-toe",
-        'classname': "TicTacToe",
-        'description': "Tic-tac-toe (also known as noughts and crosses or " +
-                       "Xs and Os) is a paper-and-pencil game for two " +
-                       "players, X and O, who take turns marking the " +
-                       "spaces in a 3×3 grid. The player who succeeds in " +
-                       "placing three of their marks in a horizontal, " +
-                       "vertical, or diagonal row wins the game."
-    },
-)
-
-
-class TicTacToe:
-    title = GAMES_INFO[0]['title']
-    rows = 3
-    cols = 3
+class ConnectFour(Game):
+    title = GAMES_INFO[1]['title']
+    rows = 6
+    cols = 7
     need_players = 2
     current_turn = 0
     cell_empty_value = '*'
-    render_empty_value = ''
     cell_values = ('X', 'O')
     render_values_map = {
         cell_empty_value: '',
-        cell_values[0]: '✕',
-        cell_values[1]: '◯'
+        cell_values[0]: '🔵',
+        cell_values[1]: '🔴'
     }
     board = [[cell_empty_value] * cols] * rows
+    need_inline_to_win = 4
 
     @classmethod
     def is_board_valid(cls, board):
@@ -43,13 +27,22 @@ class TicTacToe:
 
         allowed_values = {cls.cell_empty_value, *set(cls.cell_values)}
         if set(board_counter.keys()) - allowed_values:
-            return False, 'Only {} are allowed'.format(
+            return False, "Only {} are allowed".format(
                 ', '.join(allowed_values))
 
         if not (board_counter[cls.cell_values[1]] <=
                 board_counter[cls.cell_values[0]] <=
                 board_counter[cls.cell_values[1]] + 1):
             return False, "The balance of values isn't correct"
+
+        for col in range(cls.cols):
+            cursor = 0
+            for row in range(cls.rows):
+                if board[row][col] != cls.cell_empty_value:
+                    if row != cursor:
+                        return False, "Invalid move"
+                    else:
+                        cursor += 1
 
         return True, None
 
@@ -64,41 +57,61 @@ class TicTacToe:
 
         board[row][col] = cls.cell_values[player]
 
-        if not cls.is_board_valid(board)[0]:
-            return False
-
-        return True
+        return cls.is_board_valid(board)[0]
 
     @classmethod
     def who_is_winner(cls, board):
         """ Figure out who is the winner. -1 - means it's a draw. """
-        for row in board:
-            if row[0] != cls.cell_empty_value and \
-                    all(cell == row[0] for cell in row[1:]):
-                return cls.cell_values.index(row[0])
+        for player, cell in enumerate(cls.cell_values):
+            for row in board:
+                if cell * cls.need_inline_to_win in ''.join(row):
+                    return player
 
-        for j in range(cls.cols):
-            if board[0][j] != cls.cell_empty_value and all(
-                    board[i][j] == board[0][j] for i in range(1, cls.rows)):
-                return cls.cell_values.index(board[0][j])
+            for j in range(cls.cols):
+                if cell * cls.need_inline_to_win in ''.join(
+                        [row[j] for row in board]):
+                    return player
 
-        if board[0][0] != cls.cell_empty_value and all(
-                board[i][i] == board[0][0] for i in range(1, cls.rows)):
-            return cls.cell_values.index(board[0][0])
+            for k in range(-(cls.rows - cls.need_inline_to_win),
+                           cls.cols - cls.need_inline_to_win + 1):
+                i, j = 0, 0
+                if k < 0:
+                    j = -k
+                else:
+                    i = k
 
-        if board[cls.rows - 1][0] != cls.cell_empty_value and all(
-                board[cls.rows - 1 - i][i] == board[cls.rows - 1][0]
-                for i in range(1, cls.rows)
-        ):
-            return cls.cell_values.index(board[cls.rows - 1][0])
+                row = []
+                while i < cls.rows and j < cls.cols:
+                    row.append(board[i][j])
+                    i += 1
+                    j += 1
+
+                if cell * cls.need_inline_to_win in ''.join(row):
+                    return player
+
+            for k in range(-(cls.rows - cls.need_inline_to_win),
+                           cls.cols - cls.need_inline_to_win + 1):
+                i, j = cls.rows - 1, 0
+                if k < 0:
+                    j = -k
+                else:
+                    i = cls.rows - k - 1
+
+                row = []
+                while i >= 0 and j < cls.cols:
+                    row.append(board[i][j])
+                    i -= 1
+                    j += 1
+
+                if cell * cls.need_inline_to_win in ''.join(row):
+                    return player
 
         if all(
                 board[i][j] != cls.cell_empty_value
                 for i in range(cls.rows)
                 for j in range(cls.cols)
         ):
-            # Check a draw.
-            return -1
+            return -1  # draw
 
         return None
 
@@ -119,10 +132,11 @@ class TicTacToe:
 
     @classmethod
     def available_moves(cls, board):
-        for i in range(cls.rows):
-            for j in range(cls.cols):
+        for j in range(cls.cols):
+            for i in range(cls.rows):
                 if board[i][j] == cls.cell_empty_value:
                     yield i, j
+                    break
 
     @classmethod
     def render_board(cls, board):
