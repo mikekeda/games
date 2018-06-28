@@ -88,6 +88,11 @@ def about_page(request):
     return render(request, 'about.html')
 
 
+def terms(request):
+    """ Terms of service page. """
+    return render(request, 'terms.html')
+
+
 def log_in(request):
     if request.user.is_authenticated:
         return redirect(settings.LOGIN_REDIRECT_URL)

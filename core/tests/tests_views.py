@@ -38,6 +38,11 @@ class GamesViewTest(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertTemplateUsed(resp, 'about.html')
 
+    def test_views_terms(self):
+        resp = self.client.get(reverse('core:terms'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertTemplateUsed(resp, 'terms.html')
+
     def test_views_login(self):
         resp = self.client.get(reverse('core:login'))
         self.assertEqual(resp.status_code, 200)
