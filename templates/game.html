@@ -8,7 +8,7 @@
     <div class="jumbotron bg-white">
       <h1 class="mb-4">{{ game.pk }}: {{ game.rules.title }} ({{ players|join:" vs " }})</h1>
       {% include game.game|add:".html" %}
-      <div id="info" class="mt-2 text-muted">
+      <div id="info" class="mt-2 text-muted h4">
         <p class="waiting" style="{% if winner != None %}display: none;{% endif %}">{% trans "Waiting for" %} <a id="who_is_going_to_move" href="#">{{ user_turn }}</a> {% trans "move" %}</p>
         <p class="draft" style="{% if winner != -1 %}display: none;{% endif %}">{% trans "It's a draft. Game is over!" %}</p>
         <p class="winner" style="{% if winner == None or winner == -1 %}display: none;{% endif %}"><a id="winner" href="#">{{ winner }}</a> {% trans "win! Game is over!" %}</p>
