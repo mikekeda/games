@@ -50,6 +50,10 @@ INTERNAL_IPS = (
 
 ALLOWED_HOSTS = get_env_var('ALLOWED_HOSTS', '*').split(',')
 
+ADMINS = [
+    ('Mike', 'mriynuk@gmail.com')
+]
+
 
 # Application definition
 
@@ -240,3 +244,12 @@ SOCIAL_AUTH_NEW_USER_REDIRECT_URL = LOGIN_REDIRECT_URL
 SOCIAL_AUTH_SANITIZE_REDIRECTS = False
 SOCIAL_AUTH_FACEBOOK_KEY = get_env_var('SOCIAL_AUTH_FACEBOOK_KEY')
 SOCIAL_AUTH_FACEBOOK_SECRET = get_env_var('SOCIAL_AUTH_FACEBOOK_SECRET')
+
+EMAIL_HOST = 'smtp.mailgun.org'
+EMAIL_PORT = 2525
+EMAIL_HOST_USER = get_env_var('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = get_env_var('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True
+MAILGUN_SERVER_NAME = 'maps.mkeda.me'
+EMAIL_SUBJECT_PREFIX = '[Maps]'
+SERVER_EMAIL = 'admin@maps.mkeda.me'
