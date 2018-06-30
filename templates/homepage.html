@@ -9,13 +9,13 @@
     <div class="games jumbotron bg-white">
     {% for game in games %}
       <div class="card">
-        <img class="card-img-top" src="{% static 'img/'|add:game.title|add:'.svg' %}" alt="Card image cap">
+        <img class="card-img-top" src="{% static 'img/'|add:game.classname|add:'.svg' %}" alt="Card image cap">
         <div class="card-body">
           <h5 class="card-title">{% trans game.title %}</h5>
           <p class="card-text">{% trans game.description %}</p>
           <form action="{% url 'core:new_game' game.classname %}" method="post">
             {% csrf_token %}
-            <select name="opponent" id="opponent" class="form-control">
+            <select name="opponent" class="form-control">
               {% for opponent in users %}
                 <option value="{{ opponent.pk }}">{{ opponent.username }}</option>
               {% endfor %}
