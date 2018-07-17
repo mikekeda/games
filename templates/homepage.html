@@ -15,7 +15,8 @@
           <p class="card-text">{% trans game.description %}</p>
           <form action="{% url 'core:new_game' game.classname %}" method="post">
             {% csrf_token %}
-            <select name="opponent" class="form-control">
+            <label for="{{ game.classname }}-opponent">{% trans "Opponent" %}</label>
+            <select id="{{ game.classname }}-opponent" name="opponent" class="form-control">
               {% for opponent in users %}
                 <option value="{{ opponent.pk }}">{{ opponent.username }}</option>
               {% endfor %}
