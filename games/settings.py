@@ -4,6 +4,7 @@ Django settings for games project.
 
 import os
 import requests
+from django.utils.log import DEFAULT_LOGGING as LOGGING
 
 SITE_ENV_PREFIX = 'GAMES'
 
@@ -253,3 +254,8 @@ EMAIL_USE_TLS = True
 MAILGUN_SERVER_NAME = 'maps.mkeda.me'
 EMAIL_SUBJECT_PREFIX = '[Maps]'
 SERVER_EMAIL = 'admin@maps.mkeda.me'
+
+LOGGING['formatters']['django.server'] = {
+    '()': 'games.utils.LogFormatter',
+    'format': '["%(server_time)s", "%(levelname)s", "%(message)s"]',
+}
