@@ -102,8 +102,11 @@ class GamePlayers(models.Model):
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         """ Validate amount of players. """
-        if type(self).objects.filter(game=self.game).count() >= \
-                self.game.rules.need_players:
+        max_amount = self.game.rules.need_players
+        if not self.pk:
+            max_amount -= 1
+
+        if type(self).objects.filter(game=self.game).count() > max_amount:
             raise ValidationError(
                 "You need {} players to play this game".format(
                     self.game.rules.need_players
