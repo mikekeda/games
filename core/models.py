@@ -32,7 +32,7 @@ class BoardField(ArrayField):
 
 class Game(models.Model):
     """ Game model. """
-    players = models.ManyToManyField(User)
+    players = models.ManyToManyField(User, through='GamePlayers')
     board = BoardField(
         BoardField(
             models.CharField(max_length=3, null=True, blank=True),
@@ -94,15 +94,23 @@ class Game(models.Model):
         return '{}: {}'.format(self.pk, self.game)
 
 
-def players_changed(sender, **kwargs):
-    # Validate amount of players.
-    if kwargs['action'] == 'pre_add' and kwargs['instance'].players.count() + \
-            len(kwargs['pk_set']) != kwargs['instance'].rules.need_players:
-        raise ValidationError(
-            "You need {} players to play this game".format(
-                kwargs['instance'].rules.need_players
+class GamePlayers(models.Model):
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        """ Validate amount of players. """
+        if type(self).objects.filter(game=self.game).count() >= \
+                self.game.rules.need_players:
+            raise ValidationError(
+                "You need {} players to play this game".format(
+                    self.game.rules.need_players
+                )
             )
-        )
 
+        return super().save(force_insert, force_update, using, update_fields)
 
-m2m_changed.connect(players_changed, sender=Game.players.through)
+    class Meta:
+        db_table = 'core_game_players'

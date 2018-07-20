@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from core.games import GAMES_INFO
-from core.models import Game
+from core.models import Game, GamePlayers
 
 User = get_user_model()
 
@@ -24,7 +24,8 @@ class GamesViewTest(TestCase):
 
         cls.test_game = Game(game='TicTacToe')
         cls.test_game.save()
-        cls.test_game.players.set([cls.test_user, cls.test_admin])
+        GamePlayers(game=cls.test_game, user=cls.test_user, order=0).save()
+        GamePlayers(game=cls.test_game, user=cls.test_admin, order=1).save()
 
     # Pages available for anonymous.
     def test_views_home(self):

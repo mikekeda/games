@@ -10,7 +10,7 @@ from django.urls import reverse
 
 import core.games
 
-from .models import Game
+from .models import Game, GamePlayers
 
 User = get_user_model()
 
@@ -45,7 +45,8 @@ class GamesView(LoginRequiredMixin, View):
         opponent = post_object.pop('opponent', [None])[0]
         game = Game(game=name)
         game.save()
-        game.players.set([request.user, opponent])
+        GamePlayers(game=game, user=request.user, order=0).save()
+        GamePlayers(game=game, user_id=opponent, order=1).save()
 
         return redirect(reverse('core:game', args=(game.game, game.pk)))
 
@@ -58,7 +59,8 @@ class GameView(LoginRequiredMixin, View):
             raise Http404
 
         game = get_object_or_404(Game, pk=pk)
-        players = [user.username for user in game.players.all()]
+        players = [user.username for user in game.players.order_by(
+            'gameplayers__order')]
         user_turn = players[game.rules.who_is_going_to_move(game.board)]
         winner = game.rules.who_is_winner(game.board)
         game.board = game.rules.render_board(game.board)
