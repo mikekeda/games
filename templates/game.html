@@ -6,7 +6,7 @@
 {% block content %}
   <div class="container">
     <div class="jumbotron bg-white">
-      <h1 class="mb-4">{{ game.pk }}: {{ game.rules.title }} ({{ players|join:" vs " }})</h1>
+      <h1 class="mb-4">{{ game.pk }}: <a class="text-dark" href="{% url 'core:new_game' game.game %}">{{ game.rules.title }}</a> ({{ players|join:" vs " }})</h1>
       {% include game.game|add:".html" %}
       <div id="info" class="mt-2 text-muted h4">
         <p class="waiting" style="{% if winner != None %}display: none;{% endif %}">{% trans "Waiting for" %} <a id="who_is_going_to_move" href="#">{{ user_turn }}</a> {% trans "move" %}</p>

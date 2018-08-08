@@ -32,8 +32,17 @@ class GamesView(LoginRequiredMixin, View):
         if game_class is None:
             raise Http404
 
+        users = User.objects.exclude(id=request.user.pk) \
+            .values_list('username', 'pk', named=True)
+
+        games = [
+            game
+            for game in core.games.GAMES_INFO
+            if game['classname'] == name
+        ]
+
         return render(request, "homepage.html",
-                      {'games': core.games.GAMES_INFO})
+                      {'games': games, 'users': users})
 
     def post(self, request, name):
         """ New game. """
