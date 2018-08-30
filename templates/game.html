@@ -34,7 +34,7 @@
     });
 
     socket.onmessage = function message(event) {
-      raw_data = JSON.parse(event.data);
+      var raw_data = JSON.parse(event.data);
       for (i = 0; i < raw_data.board.length; i++) {
         for (j = 0; j < raw_data.board[i].length; j++) {
           $board.find('td#' + i + '-' + j).html(raw_data.board[i][j]);
@@ -55,7 +55,7 @@
       }
     };
 
-    if (socket.readyState == WebSocket.OPEN) {
+    if (socket.readyState === WebSocket.OPEN) {
       socket.onopen();
     }
   </script>

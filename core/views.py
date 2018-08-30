@@ -16,6 +16,7 @@ User = get_user_model()
 
 
 class HomeView(View):
+    # noinspection PyMethodMayBeStatic
     def get(self, request):
         """ Home page. """
         users = User.objects.exclude(id=request.user.pk) \
@@ -26,6 +27,7 @@ class HomeView(View):
 
 
 class GamesView(LoginRequiredMixin, View):
+    # noinspection PyMethodMayBeStatic
     def get(self, request, name):
         """ Game page. """
         game_class = getattr(core.games, name, None)
@@ -44,6 +46,7 @@ class GamesView(LoginRequiredMixin, View):
         return render(request, "homepage.html",
                       {'games': games, 'users': users})
 
+    # noinspection PyMethodMayBeStatic
     def post(self, request, name):
         """ New game. """
         game_class = getattr(core.games, name, None)
@@ -61,6 +64,7 @@ class GamesView(LoginRequiredMixin, View):
 
 
 class GameView(LoginRequiredMixin, View):
+    # noinspection PyMethodMayBeStatic
     def get(self, request, name, pk):
         """ Game page. """
         game_class = getattr(core.games, name, None)
