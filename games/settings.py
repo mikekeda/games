@@ -229,7 +229,7 @@ STATIC_ROOT = '/home/voron/sites/cdn/games'
 STATIC_URL = '/static/'
 if not DEBUG:
     # Use Google bucket for production.
-    STATIC_URL = 'http://new-cdn.mkeda.me/games/'
+    STATIC_URL = 'https://storage.cloud.google.com/cdn.mkeda.me/games/'
 
 STATICFILES_DIRS = (
     ('', os.path.join(BASE_DIR, 'static')),
