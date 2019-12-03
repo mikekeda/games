@@ -34,6 +34,7 @@
 .games-container {
     .game-item{
         float: left;
+        min-height: 250px;
 
         .board {
             &.TicTacToe td {
