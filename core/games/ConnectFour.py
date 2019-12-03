@@ -41,8 +41,8 @@ class ConnectFour(Game):
                 if board[row][col] != cls.cell_empty_value:
                     if row != cursor:
                         return False, "Invalid move"
-                    else:
-                        cursor += 1
+
+                    cursor += 1
 
         return True, None
 
@@ -133,7 +133,6 @@ class ConnectFour(Game):
     @classmethod
     def bot_move(cls, board, player):
         """ Bot make a move. """
-        pass
 
         return board
 
