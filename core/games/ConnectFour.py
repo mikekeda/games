@@ -131,6 +131,13 @@ class ConnectFour(Game):
         return board
 
     @classmethod
+    def bot_move(cls, board, player):
+        """ Bot make a move. """
+        pass
+
+        return board
+
+    @classmethod
     def available_moves(cls, board):
         for j in range(cls.cols):
             for i in range(cls.rows):

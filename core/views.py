@@ -10,7 +10,7 @@ from django.urls import reverse
 
 import core.games
 
-from .models import Game, GamePlayers
+from core.models import Game, GamePlayers
 
 User = get_user_model()
 
@@ -19,8 +19,12 @@ class HomeView(View):
     # noinspection PyMethodMayBeStatic
     def get(self, request):
         """ Home page. """
-        users = User.objects.exclude(id=request.user.pk) \
-            .values_list('username', 'pk', named=True)
+        users = list(User.objects.exclude(id=request.user.pk).values_list(
+            'username', 'pk', named=True
+        ))
+
+        # Bot should be first.
+        users.sort(key=lambda x: x.username == 'bot', reverse=True)
 
         return render(request, "homepage.html",
                       {'games': core.games.GAMES_INFO, 'users': users})
@@ -88,7 +92,7 @@ class GameView(LoginRequiredMixin, View):
 
 @login_required
 def my_games(request, name=None):
-    games = Game.objects.filter(players=request.user)
+    games = Game.objects.filter(players=request.user).order_by('-id')
     if name:
         games = games.filter(game=name)
 

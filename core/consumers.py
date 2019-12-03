@@ -2,7 +2,7 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.shortcuts import get_object_or_404
 
-from .models import Game
+from core.models import Game
 
 
 class WsGame(JsonWebsocketConsumer):
@@ -14,7 +14,7 @@ class WsGame(JsonWebsocketConsumer):
         self.game_id = int(self.scope['url_route']['kwargs'].get('game_id'))
 
         async_to_sync(self.channel_layer.group_add)(
-            'game-{}'.format(str(self.game_id)),
+            f'game-{str(self.game_id)}',
             self.channel_name
         )
         super().connect()
@@ -22,7 +22,7 @@ class WsGame(JsonWebsocketConsumer):
     def disconnect(self, code):
         """ Remove from specific 'game' group and close the webSocket. """
         async_to_sync(self.channel_layer.group_discard)(
-            'game-{}'.format(str(self.game_id)),
+            f'game-{str(self.game_id)}',
             self.channel_name
         )
         self.close()
@@ -37,6 +37,17 @@ class WsGame(JsonWebsocketConsumer):
             move = content.get('move').split('-')
             game.board = game.rules.move(game.board, player_index,
                                          int(move[0]), int(move[1]))
+
+            bot_index = None
+            for i, player in enumerate(players):
+                if player.username == 'bot':
+                    bot_index = i
+                    break
+
+            # If bot in the game - make it move.
+            if bot_index is not None:
+                game.board = game.rules.bot_move(game.board, bot_index)
+
             game.save()
 
     def game_update(self, message):

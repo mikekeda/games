@@ -1,7 +1,7 @@
 {% load core_tags %}
 
 <table class="board {{ game.game }}">
-  {% for row in game.rules.rows|loop:True %}
+  {% for row in game.rules.rows|loop:True reversed %}
     <tr>
       {% for col in game.rules.cols|loop %}
         <td id="{{ row }}-{{ col }}">{{ game.board|get:row|get:col }}</td>

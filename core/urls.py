@@ -3,8 +3,8 @@ Core URL Configuration
 """
 from django.urls import path
 
-from .views import (HomeView, GameView, GamesView, my_games, about_page,
-                    log_in, log_out, sign_up, terms)
+from core.views import (HomeView, GameView, GamesView, my_games, about_page,
+                        log_in, log_out, sign_up, terms)
 
 app_name = "Core"
 

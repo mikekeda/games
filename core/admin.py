@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Game, GamePlayers
+from core.models import Game, GamePlayers
 
 
 class GamePlayersInline(admin.TabularInline):

@@ -65,6 +65,12 @@ class Game(ABC):
 
     @classmethod
     @abstractmethod
+    def bot_move(cls, board, player):
+        """ Bot make a move. """
+        pass
+
+    @classmethod
+    @abstractmethod
     def available_moves(cls, board: list):
         """ Return list of available moves for given border. """
         pass
