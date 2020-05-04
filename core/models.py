@@ -113,6 +113,3 @@ class GamePlayers(models.Model):
             )
 
         return super().save(force_insert, force_update, using, update_fields)
-
-    class Meta:
-        db_table = 'core_game_players'
