@@ -5,20 +5,24 @@ Django settings for games project.
 import os
 import requests
 from django.utils.log import DEFAULT_LOGGING as LOGGING
-from django_jenkins.tasks import run_pylint
+
+try:
+    from django_jenkins.tasks import run_pylint
 
 
-class Lint:
-    """
-    Monkey patch to fix
-    TypeError: __init__() got an unexpected keyword argument 'exit'.
-    """
-    class Run(run_pylint.lint.Run):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, do_exit=kwargs.pop("exit"), **kwargs)
+    class Lint:
+        """
+        Monkey patch to fix
+        TypeError: __init__() got an unexpected keyword argument 'exit'.
+        """
+        class Run(run_pylint.lint.Run):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, do_exit=kwargs.pop("exit"), **kwargs)
 
 
-run_pylint.lint = Lint
+    run_pylint.lint = Lint
+except ImportError:
+    run_pylint = None
 
 SITE_ENV_PREFIX = 'GAMES'
 
@@ -82,14 +86,13 @@ INSTALLED_APPS = [
 
     'channels',
     'social_django',
-    'django_jenkins',
     'widget_tweaks',
 
     'core',
 ]
 
 if DEBUG:
-    INSTALLED_APPS += ['debug_toolbar']
+    INSTALLED_APPS += ['debug_toolbar', 'django_jenkins']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
