@@ -2,54 +2,54 @@
 @import 'bootstrap';
 
 .board {
-    td {
-        text-align: center;
-        vertical-align: middle;
-        border: 1px solid grey;
-    }
+  td {
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid grey;
+  }
 
-    &.TicTacToe td {
-        width: 150px;
-        height: 150px;
-        font-size: 100px;
-        line-height: 120px;
-    }
+  &.TicTacToe td {
+    width: 150px;
+    height: 150px;
+    font-size: 100px;
+    line-height: 120px;
+  }
 
-    &.ConnectFour td {
-        width: 75px;
-        height: 75px;
-        font-size: 50px;
-        line-height: 60px;
-    }
+  &.ConnectFour td {
+    width: 75px;
+    height: 75px;
+    font-size: 50px;
+    line-height: 60px;
+  }
 }
 
 .games {
-    .card {
-        float: left;
-        margin-right: 30px;
-        width: 18rem;
-    }
+  .card {
+    float: left;
+    margin-right: 30px;
+    width: 18rem;
+  }
 }
 
 .games-container {
-    .game-item{
-        float: left;
-        min-height: 250px;
+  .game-item{
+    float: left;
+    min-height: 250px;
 
-        .board {
-            &.TicTacToe td {
-                width: 50px;
-                height: 50px;
-                font-size: 30px;
-                line-height: 40px;
-            }
+    .board {
+      &.TicTacToe td {
+        width: 50px;
+        height: 50px;
+        font-size: 30px;
+        line-height: 40px;
+      }
 
-            &.ConnectFour td {
-                width: 25px;
-                height: 25px;
-                font-size: 15px;
-                line-height: 20px;
-            }
-        }
+      &.ConnectFour td {
+        width: 25px;
+        height: 25px;
+        font-size: 15px;
+        line-height: 20px;
+      }
     }
+  }
 }

@@ -37,46 +37,38 @@ class Game(ABC):
     @abstractmethod
     def is_board_valid(cls, board: list):
         """ Check if given board is valid. """
-        pass
 
     @classmethod
     @abstractmethod
     def is_valid_move(cls, board: list, player: int, row: int, col: int):
         """ Check if given move is valid. """
-        pass
 
     @classmethod
     @abstractmethod
     def who_is_winner(cls, board: list):
         """ Find out who is the winner. """
-        pass
 
     @classmethod
     @abstractmethod
     def who_is_going_to_move(cls, board: list):
         """ Find out who is going to move. """
-        pass
 
     @classmethod
     @abstractmethod
     def move(cls, board: list, player: int, row: int, col: int):
         """ Make a move. """
-        pass
 
     @classmethod
     @abstractmethod
     def bot_move(cls, board, player):
         """ Bot make a move. """
-        pass
 
     @classmethod
     @abstractmethod
     def available_moves(cls, board: list):
         """ Return list of available moves for given border. """
-        pass
 
     @classmethod
     @abstractmethod
     def render_board(cls, board: list):
         """ Render given board. """
-        pass

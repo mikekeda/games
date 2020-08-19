@@ -19,9 +19,9 @@ class TicTacToeBot:
     @classmethod
     def get_available_moves(cls, board):
         """ Get all available moves. """
-        for i in range(len(board)):
-            for j in range(len(board[i])):
-                if board[i][j] == cls.cell_empty_value:
+        for i, row in enumerate(board):
+            for j, cell in enumerate(row):
+                if cell == cls.cell_empty_value:
                     yield i, j
 
     @classmethod

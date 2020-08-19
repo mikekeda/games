@@ -2,11 +2,11 @@ Games
 ======================
 
 This is site where you can play board games.
-Link to the site - https://games.mkeda.me
+Link to the site - [https://games.mkeda.me](https://games.mkeda.me)
 
 Available Games
 ------------
-- **Tic-tac-toe** - Game for two players, X and O, who take turns marking the spaces in a 3×3 grid.
+-   **Tic-tac-toe** - Game for two players, X and O, who take turns marking the spaces in a 3×3 grid.
 
 Installation
 ------------
