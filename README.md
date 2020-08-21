@@ -2,6 +2,7 @@ Games
 ======================
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/705d72004f7f46daa23202e59cc4718a)](https://app.codacy.com/manual/mikekeda/games?utm_source=github.com&utm_medium=referral&utm_content=mikekeda/games&utm_campaign=Badge_Grade_Dashboard)
+[![Requirements Status](https://requires.io/github/mikekeda/games/requirements.svg?branch=master)](https://requires.io/github/mikekeda/games/requirements/?branch=master)
 
 This is site where you can play board games.
 Link to the site - [https://games.mkeda.me](https://games.mkeda.me)
