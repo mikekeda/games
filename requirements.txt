@@ -2,7 +2,7 @@ asgiref==3.3.1
 channels==3.0.3
 channels-redis==3.2.0
 daphne==3.0.1
-Django==3.1.6
+Django==3.1.7
 django-redis==4.12.1
 django-widget-tweaks==1.4.8
 Pillow==8.1.0
