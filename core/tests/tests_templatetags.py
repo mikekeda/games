@@ -11,5 +11,5 @@ class CoreTemplatetagsTest(TestCase):
         self.assertListEqual(list(result), list(reversed(range(5))))
 
     def test_templatetags_get(self):
-        result = get(['q', 'w', 'e', 'r', 't', 'y'], 2)
-        self.assertEqual(result, 'e')
+        result = get(["q", "w", "e", "r", "t", "y"], 2)
+        self.assertEqual(result, "e")

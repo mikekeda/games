@@ -9,7 +9,7 @@ class GamePlayersInline(admin.TabularInline):
 
 
 class GameAdmin(admin.ModelAdmin):
-    readonly_fields = ('current_turn',)
+    readonly_fields = ("current_turn",)
     inlines = [GamePlayersInline]
 
 

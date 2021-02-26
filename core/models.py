@@ -3,7 +3,6 @@ from datetime import datetime
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
@@ -20,25 +19,25 @@ class BoardField(ArrayField):
     """ Board field. """
 
     def formfield(self, **kwargs):
-        kwargs['widget'] = Textarea
+        kwargs["widget"] = Textarea
         if self.blank:
-            kwargs['delimiter'] = '\n'
+            kwargs["delimiter"] = "\n"
         else:
-            kwargs['delimiter'] = '|'
+            kwargs["delimiter"] = "|"
 
         return super().formfield(**kwargs)
 
 
 class Game(models.Model):
     """ Game model. """
-    players = models.ManyToManyField(User, through='GamePlayers')
+
+    players = models.ManyToManyField(User, through="GamePlayers")
     board = BoardField(
         BoardField(
             models.CharField(max_length=3, null=True, blank=True),
         ),
         null=True,
-        blank=True
-
+        blank=True,
     )
     game = models.CharField(max_length=16, choices=core.games.GAMES)
     current_turn = models.PositiveSmallIntegerField(default=0)
@@ -61,8 +60,9 @@ class Game(models.Model):
             if not board_check[0]:
                 raise ValidationError(board_check[1])
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
         if not self.pk:
             self.rules = getattr(core.games, self.game)
             self.board = deepcopy(self.rules.board)
@@ -77,20 +77,20 @@ class Game(models.Model):
 
         # Update the game board via websockets.
         async_to_sync(channel_layer.group_send)(
-            'game-{}'.format(str(self.pk)),
+            "game-{}".format(str(self.pk)),
             {
-                'type': 'game.update',
-                'content': {
-                    'board': self.rules.render_board(self.board),
-                    'turn': self.current_turn,
-                    'winner': winner,
-                    'pk': self.pk
-                }
-            }
+                "type": "game.update",
+                "content": {
+                    "board": self.rules.render_board(self.board),
+                    "turn": self.current_turn,
+                    "winner": winner,
+                    "pk": self.pk,
+                },
+            },
         )
 
     def __str__(self):
-        return '{}: {}'.format(self.pk, self.game)
+        return "{}: {}".format(self.pk, self.game)
 
 
 class GamePlayers(models.Model):
@@ -98,8 +98,9 @@ class GamePlayers(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     order = models.PositiveSmallIntegerField(default=0)
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
         """ Validate amount of players. """
         max_amount = self.game.rules.need_players
         if not self.pk:

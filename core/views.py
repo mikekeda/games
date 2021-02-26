@@ -19,15 +19,18 @@ class HomeView(View):
     # noinspection PyMethodMayBeStatic
     def get(self, request):
         """ Home page. """
-        users = list(User.objects.exclude(id=request.user.pk).values_list(
-            'username', 'pk', named=True
-        ))
+        users = list(
+            User.objects.exclude(id=request.user.pk).values_list(
+                "username", "pk", named=True
+            )
+        )
 
         # Bot should be first.
-        users.sort(key=lambda x: x.username == 'bot', reverse=True)
+        users.sort(key=lambda x: x.username == "bot", reverse=True)
 
-        return render(request, "homepage.html",
-                      {'games': core.games.GAMES_INFO, 'users': users})
+        return render(
+            request, "homepage.html", {"games": core.games.GAMES_INFO, "users": users}
+        )
 
 
 class GamesView(LoginRequiredMixin, View):
@@ -38,17 +41,13 @@ class GamesView(LoginRequiredMixin, View):
         if game_class is None:
             raise Http404
 
-        users = User.objects.exclude(id=request.user.pk) \
-            .values_list('username', 'pk', named=True)
+        users = User.objects.exclude(id=request.user.pk).values_list(
+            "username", "pk", named=True
+        )
 
-        games = [
-            game
-            for game in core.games.GAMES_INFO
-            if game['classname'] == name
-        ]
+        games = [game for game in core.games.GAMES_INFO if game["classname"] == name]
 
-        return render(request, "homepage.html",
-                      {'games': games, 'users': users})
+        return render(request, "homepage.html", {"games": games, "users": users})
 
     # noinspection PyMethodMayBeStatic
     def post(self, request, name):
@@ -58,13 +57,13 @@ class GamesView(LoginRequiredMixin, View):
             raise Http404
 
         post_object = request.POST.copy()
-        opponent = post_object.pop('opponent', [None])[0]
+        opponent = post_object.pop("opponent", [None])[0]
         game = Game(game=name)
         game.save()
         GamePlayers(game=game, user=request.user, order=0).save()
         GamePlayers(game=game, user_id=opponent, order=1).save()
 
-        return redirect(reverse('core:game', args=(game.game, game.pk)))
+        return redirect(reverse("core:game", args=(game.game, game.pk)))
 
 
 class GameView(LoginRequiredMixin, View):
@@ -76,40 +75,45 @@ class GameView(LoginRequiredMixin, View):
             raise Http404
 
         game = get_object_or_404(Game, pk=pk)
-        players = [user.username for user in game.players.order_by(
-            'gameplayers__order')]
+        players = [
+            user.username for user in game.players.order_by("gameplayers__order")
+        ]
         user_turn = players[game.rules.who_is_going_to_move(game.board)]
         winner = game.rules.who_is_winner(game.board)
         game.board = game.rules.render_board(game.board)
 
-        return render(request, "game.html", {
-            'game': game,
-            'players': players,
-            'user_turn': user_turn,
-            'winner': players[winner] if winner not in (None, -1) else winner
-        })
+        return render(
+            request,
+            "game.html",
+            {
+                "game": game,
+                "players": players,
+                "user_turn": user_turn,
+                "winner": players[winner] if winner not in (None, -1) else winner,
+            },
+        )
 
 
 @login_required
 def my_games(request, name=None):
-    games = Game.objects.filter(players=request.user).order_by('-id')
+    games = Game.objects.filter(players=request.user).order_by("-id")
     if name:
         games = games.filter(game=name)
 
     for game in games:
         game.board = game.rules.render_board(game.board)
 
-    return render(request, "games.html", {'games': games})
+    return render(request, "games.html", {"games": games})
 
 
 def about_page(request):
     """ About page. """
-    return render(request, 'about.html')
+    return render(request, "about.html")
 
 
 def terms(request):
     """ Terms of service page. """
-    return render(request, 'terms.html')
+    return render(request, "terms.html")
 
 
 def log_in(request):
@@ -117,13 +121,13 @@ def log_in(request):
         return redirect(settings.LOGIN_REDIRECT_URL)
 
     form = AuthenticationForm()
-    if request.method == 'POST':
+    if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             login(request, form.get_user())
             return redirect(reverse(settings.LOGIN_REDIRECT_URL))
 
-    return render(request, 'login.html', {'form': form})
+    return render(request, "login.html", {"form": form})
 
 
 @login_required
@@ -136,16 +140,16 @@ def sign_up(request):
     if request.user.is_authenticated:
         return redirect(settings.LOGIN_REDIRECT_URL)
     form = UserCreationForm()
-    if request.method == 'POST':
+    if request.method == "POST":
         form = UserCreationForm(data=request.POST)
         if form.is_valid():
             form.save()
             user = authenticate(
-                username=form.cleaned_data['username'],
-                password=form.cleaned_data['password1']
+                username=form.cleaned_data["username"],
+                password=form.cleaned_data["password1"],
             )
             login(request, user)
 
             return redirect(reverse(settings.LOGIN_REDIRECT_URL))
 
-    return render(request, 'signup.html', {'form': form})
+    return render(request, "signup.html", {"form": form})
