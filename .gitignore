@@ -14,3 +14,4 @@ celerybeat-schedule
 .DS_Store
 .coafile
 package-lock.json
+.coverage
