@@ -32,44 +32,44 @@ GAMES = ((game["classname"], game["title"]) for game in GAMES_INFO)
 
 
 class Game(ABC):
-    """ Game interface. """
+    """Game interface."""
 
     @classmethod
     @abstractmethod
     def is_board_valid(cls, board: list):
-        """ Check if given board is valid. """
+        """Check if given board is valid."""
 
     @classmethod
     @abstractmethod
     def is_valid_move(cls, board: list, player: int, row: int, col: int):
-        """ Check if given move is valid. """
+        """Check if given move is valid."""
 
     @classmethod
     @abstractmethod
     def who_is_winner(cls, board: list):
-        """ Find out who is the winner. """
+        """Find out who is the winner."""
 
     @classmethod
     @abstractmethod
     def who_is_going_to_move(cls, board: list):
-        """ Find out who is going to move. """
+        """Find out who is going to move."""
 
     @classmethod
     @abstractmethod
     def move(cls, board: list, player: int, row: int, col: int):
-        """ Make a move. """
+        """Make a move."""
 
     @classmethod
     @abstractmethod
     def bot_move(cls, board, player):
-        """ Bot make a move. """
+        """Bot make a move."""
 
     @classmethod
     @abstractmethod
     def available_moves(cls, board: list):
-        """ Return list of available moves for given border. """
+        """Return list of available moves for given border."""
 
     @classmethod
     @abstractmethod
     def render_board(cls, board: list):
-        """ Render given board. """
+        """Render given board."""

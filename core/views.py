@@ -18,7 +18,7 @@ User = get_user_model()
 class HomeView(View):
     # noinspection PyMethodMayBeStatic
     def get(self, request):
-        """ Home page. """
+        """Home page."""
         users = list(
             User.objects.exclude(id=request.user.pk).values_list(
                 "username", "pk", named=True
@@ -36,7 +36,7 @@ class HomeView(View):
 class GamesView(LoginRequiredMixin, View):
     # noinspection PyMethodMayBeStatic
     def get(self, request, name):
-        """ Game page. """
+        """Game page."""
         game_class = getattr(core.games, name, None)
         if game_class is None:
             raise Http404
@@ -51,7 +51,7 @@ class GamesView(LoginRequiredMixin, View):
 
     # noinspection PyMethodMayBeStatic
     def post(self, request, name):
-        """ New game. """
+        """New game."""
         game_class = getattr(core.games, name, None)
         if game_class is None:
             raise Http404
@@ -69,7 +69,7 @@ class GamesView(LoginRequiredMixin, View):
 class GameView(LoginRequiredMixin, View):
     # noinspection PyMethodMayBeStatic
     def get(self, request, name, pk):
-        """ Game page. """
+        """Game page."""
         game_class = getattr(core.games, name, None)
         if game_class is None:
             raise Http404
@@ -107,12 +107,12 @@ def my_games(request, name=None):
 
 
 def about_page(request):
-    """ About page. """
+    """About page."""
     return render(request, "about.html")
 
 
 def terms(request):
-    """ Terms of service page. """
+    """Terms of service page."""
     return render(request, "terms.html")
 
 

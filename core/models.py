@@ -16,7 +16,7 @@ User = get_user_model()
 
 
 class BoardField(ArrayField):
-    """ Board field. """
+    """Board field."""
 
     def formfield(self, **kwargs):
         kwargs["widget"] = Textarea
@@ -29,7 +29,7 @@ class BoardField(ArrayField):
 
 
 class Game(models.Model):
-    """ Game model. """
+    """Game model."""
 
     players = models.ManyToManyField(User, through="GamePlayers")
     board = BoardField(
@@ -101,7 +101,7 @@ class GamePlayers(models.Model):
     def save(
         self, force_insert=False, force_update=False, using=None, update_fields=None
     ):
-        """ Validate amount of players. """
+        """Validate amount of players."""
         max_amount = self.game.rules.need_players
         if not self.pk:
             max_amount -= 1

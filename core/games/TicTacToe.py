@@ -5,20 +5,20 @@ from core.games.Game import Game, GAMES_INFO
 
 
 class TicTacToeBot:
-    """ Bot class for TicTacToe. """
+    """Bot class for TicTacToe."""
 
     cell_empty_value = None
     cell_values = None
 
     @classmethod
     def class_init(cls, cell_empty_value, cell_values):
-        """ Set class parameters. """
+        """Set class parameters."""
         cls.cell_empty_value = cell_empty_value
         cls.cell_values = cell_values
 
     @classmethod
     def get_available_moves(cls, board):
-        """ Get all available moves. """
+        """Get all available moves."""
         for i, row in enumerate(board):
             for j, cell in enumerate(row):
                 if cell == cls.cell_empty_value:
@@ -26,12 +26,12 @@ class TicTacToeBot:
 
     @classmethod
     def get_move(cls, board, player):
-        """ Find the best move. """
+        """Find the best move."""
         return next(cls.get_available_moves(board))
 
 
 class TicTacToe(Game):
-    """ TicTacToe game. """
+    """TicTacToe game."""
 
     title = GAMES_INFO[0]["title"]
     rows = 3
@@ -65,7 +65,7 @@ class TicTacToe(Game):
 
     @classmethod
     def is_valid_move(cls, board, player, row, col):
-        """ Check if move is valid. """
+        """Check if move is valid."""
 
         if any([row < 0, row >= cls.rows, col < 0, col >= cls.cols]):
             return False
@@ -82,7 +82,7 @@ class TicTacToe(Game):
 
     @classmethod
     def who_is_winner(cls, board):
-        """ Figure out who is the winner. -1 - means it's a draw. """
+        """Figure out who is the winner. -1 - means it's a draw."""
         for row in board:
             if row[0] != cls.cell_empty_value and all(
                 cell == row[0] for cell in row[1:]
@@ -131,7 +131,7 @@ class TicTacToe(Game):
 
     @classmethod
     def bot_move(cls, board, player):
-        """ Bot make a move. """
+        """Bot make a move."""
         row, col = cls.bot.get_move(board, player)
 
         if cls.is_valid_move(deepcopy(board), player, row, col):

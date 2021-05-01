@@ -6,12 +6,12 @@ from core.models import Game
 
 
 class WsGame(JsonWebsocketConsumer):
-    """ WebsocketConsumer related to specific game. """
+    """WebsocketConsumer related to specific game."""
 
     game_id = None
 
     def connect(self):
-        """ Adds to specific 'game' group. """
+        """Adds to specific 'game' group."""
         self.game_id = int(self.scope["url_route"]["kwargs"].get("game_id"))
 
         async_to_sync(self.channel_layer.group_add)(
@@ -20,7 +20,7 @@ class WsGame(JsonWebsocketConsumer):
         super().connect()
 
     def disconnect(self, code):
-        """ Remove from specific 'game' group and close the webSocket. """
+        """Remove from specific 'game' group and close the webSocket."""
         async_to_sync(self.channel_layer.group_discard)(
             f"game-{str(self.game_id)}", self.channel_name
         )
@@ -52,5 +52,5 @@ class WsGame(JsonWebsocketConsumer):
             game.save()
 
     def game_update(self, message):
-        """ Message binding. """
+        """Message binding."""
         self.send_json(message["content"])

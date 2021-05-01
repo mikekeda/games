@@ -60,7 +60,7 @@ class ConnectFour(Game):
 
     @classmethod
     def who_is_winner(cls, board):
-        """ Figure out who is the winner. -1 - means it's a draw. """
+        """Figure out who is the winner. -1 - means it's a draw."""
         for player, cell in enumerate(cls.cell_values):
             for row in board:
                 if cell * cls.need_inline_to_win in "".join(row):
@@ -133,7 +133,7 @@ class ConnectFour(Game):
 
     @classmethod
     def bot_move(cls, board, player):
-        """ Bot make a move. """
+        """Bot make a move."""
 
         return board
 
