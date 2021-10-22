@@ -4,7 +4,7 @@ channels-redis==3.3.1
 daphne==3.0.2
 Django==3.2.8
 django-redis==5.0.0
-django-widget-tweaks==1.4.8
+django-widget-tweaks==1.4.9
 Pillow==8.4.0
 psycopg2-binary==2.9.1
 requests==2.26.0
