@@ -1,5 +1,5 @@
 from django.core.asgi import get_asgi_application
-from django.conf.urls import url
+from django.urls import path
 
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
@@ -13,7 +13,7 @@ games = ProtocolTypeRouter(
         "websocket": AuthMiddlewareStack(
             URLRouter(
                 [
-                    url(r"^ws/game/(?P<game_id>\w+)$", WsGame.as_asgi()),
+                    path(r"^ws/game/(?P<game_id>\w+)$", WsGame.as_asgi()),
                 ]
             )
         ),
