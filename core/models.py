@@ -77,7 +77,7 @@ class Game(models.Model):
 
         # Update the game board via websockets.
         async_to_sync(channel_layer.group_send)(
-            "game-{}".format(str(self.pk)),
+            f"game-{self.pk}",
             {
                 "type": "game.update",
                 "content": {
@@ -90,7 +90,7 @@ class Game(models.Model):
         )
 
     def __str__(self):
-        return "{}: {}".format(self.pk, self.game)
+        return f"{self.pk}: {self.game}"
 
 
 class GamePlayers(models.Model):
@@ -108,9 +108,7 @@ class GamePlayers(models.Model):
 
         if type(self).objects.filter(game=self.game).count() > max_amount:
             raise ValidationError(
-                "You need {} players to play this game".format(
-                    self.game.rules.need_players
-                )
+                f"You need { self.game.rules.need_players} players to play this game"
             )
 
         return super().save(force_insert, force_update, using, update_fields)

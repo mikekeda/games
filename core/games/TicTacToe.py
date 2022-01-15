@@ -52,7 +52,7 @@ class TicTacToe(Game):
 
         allowed_values = {cls.cell_empty_value, *set(cls.cell_values)}
         if set(board_counter.keys()) - allowed_values:
-            return False, "Only {} are allowed".format(", ".join(allowed_values))
+            return False, f"Only {', '.join(allowed_values)} are allowed"
 
         if not (
             board_counter[cls.cell_values[1]]
