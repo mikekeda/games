@@ -1,6 +1,6 @@
 asgiref==3.5.0
 channels==3.0.4
-channels-redis==3.3.1
+channels-redis==3.4.0
 daphne==3.0.2
 Django==4.0.3
 django-redis==5.2.0
