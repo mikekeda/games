@@ -1,4 +1,4 @@
-asgiref==3.5.2
+asgiref==3.6.0
 channels==4.0.0
 channels-redis==4.0.0
 daphne==4.0.0
