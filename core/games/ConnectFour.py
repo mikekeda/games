@@ -12,7 +12,11 @@ class ConnectFour(Game):
     current_turn = 0
     cell_empty_value = "*"
     cell_values = ("X", "O")
-    render_values_map = {cell_empty_value: "", cell_values[0]: "🔵", cell_values[1]: "🔴"}
+    render_values_map = {
+        cell_empty_value: "",
+        cell_values[0]: "🔵",
+        cell_values[1]: "🔴",
+    }
     board = [[cell_empty_value] * cols] * rows
     need_inline_to_win = 4
 

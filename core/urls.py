@@ -1,6 +1,7 @@
 """
 Core URL Configuration
 """
+
 from django.urls import path
 
 from core.views import (
