@@ -5,17 +5,3 @@ pep8==1.7.1
 pyflakes==3.2.0
 pylint==3.3.4
 pylint-django==2.6.1
-
-
-cd /home/voron/sites/games
-git pull origin master
-. /home/voron/env/games/bin/activate
-pip install -r requirements.txt
-python manage.py migrate
-rm -rf /home/voron/sites/cdn/games
-python manage.py collectstatic --noinput
-find /home/voron/sites/cdn/games -type f -exec gzip "{}" \; -exec mv "{}.gz" "{}" \;
-deactivate
-gsutil -m -h "Cache-Control:public, max-age=2592000" -h "Content-Encoding:gzip" rsync -c -d -r /home/voron/sites/cdn/games gs://cdn.mkeda.me/games
-. /home/voron/env/games/bin/activate
-sudo supervisorctl -c /home/voron/config/supervisord.conf -u voron -p Sdsnth1984 restart games
