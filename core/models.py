@@ -73,7 +73,7 @@ class Game(models.Model):
         if winner is not None:
             self.completed = datetime.now()
 
-        super().save(force_insert, force_update, using, update_fields)
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
         # Update the game board via websockets.
         async_to_sync(channel_layer.group_send)(
@@ -111,4 +111,9 @@ class GamePlayers(models.Model):
                 f"You need { self.game.rules.need_players} players to play this game"
             )
 
-        return super().save(force_insert, force_update, using, update_fields)
+        return super().save(
+            force_insert=force_insert,
+            force_update=force_update,
+            using=using,
+            update_fields=update_fields,
+        )
