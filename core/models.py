@@ -73,7 +73,12 @@ class Game(models.Model):
         if winner is not None:
             self.completed = datetime.now()
 
-        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+        super().save(
+            force_insert=force_insert,
+            force_update=force_update,
+            using=using,
+            update_fields=update_fields,
+        )
 
         # Update the game board via websockets.
         async_to_sync(channel_layer.group_send)(
