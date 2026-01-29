@@ -6,7 +6,6 @@ from channels.auth import AuthMiddlewareStack
 
 from core.consumers import WsGame
 
-
 games = ProtocolTypeRouter(
     {
         "http": get_asgi_application(),
