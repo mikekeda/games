@@ -228,7 +228,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 
-STATIC_ROOT = "/home/voron/sites/cdn/games"
+STATIC_ROOT = "/home/debian/sites/cdn/games"
 
 STATIC_URL = "/static/"
 if not DEBUG:
