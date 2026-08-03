@@ -1,8 +1,9 @@
 // include bootstrap-sass
 @import 'bootstrap';
 
-// Board styling lives in static/css/board.css, outside the sass build, so
-// that adding a game never requires recompiling bootstrap.
+// The parts that vary per game -- boards, and card artwork -- live in
+// static/css/games.css, outside the sass build, so that adding a game never
+// requires recompiling bootstrap. Generic card layout stays here.
 
 .games {
   .card {

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg preserveAspectRatio="none" version="1.1" viewBox="0 0 350 300" xmlns="http://www.w3.org/2000/svg">
-  <rect width="350" height="300" fill="#fff"/>
-  <rect x="55" y="30" width="240" height="240" fill="#1f7a4d"/>
-  <g stroke="#145636" stroke-width="2">
-    <path d="M55 30h240M55 60h240M55 90h240M55 120h240M55 150h240M55 180h240M55 210h240M55 240h240M55 270h240"/>
-    <path d="M55 30v240M85 30v240M115 30v240M145 30v240M175 30v240M205 30v240M235 30v240M265 30v240M295 30v240"/>
+<svg version="1.1" viewBox="0 0 350 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="350" height="300" fill="#1f7a4d"/>
+  <g stroke="#145636" stroke-width="2" stroke-linecap="square">
+    <path d="M39 14h272M39 48h272M39 82h272M39 116h272M39 150h272M39 184h272M39 218h272M39 252h272M39 286h272"/>
+    <path d="M39 14v272M73 14v272M107 14v272M141 14v272M175 14v272M209 14v272M243 14v272M277 14v272M311 14v272"/>
   </g>
-  <g stroke="#145636" stroke-width="1.5">
-    <circle cx="160" cy="105" r="12" fill="#111"/>
-    <circle cx="130" cy="135" r="12" fill="#f7f7f7"/>
-    <circle cx="160" cy="135" r="12" fill="#f7f7f7"/>
-    <circle cx="190" cy="135" r="12" fill="#111"/>
-    <circle cx="160" cy="165" r="12" fill="#111"/>
-    <circle cx="190" cy="165" r="12" fill="#f7f7f7"/>
-    <circle cx="220" cy="165" r="12" fill="#111"/>
-    <circle cx="190" cy="195" r="12" fill="#f7f7f7"/>
+  <!-- A real position: black d3, white c5, black b6, white f3. -->
+  <g stroke="#0d3b25" stroke-width="1.5">
+    <circle cx="158" cy="99" r="14" fill="#111"/>
+    <circle cx="226" cy="99" r="14" fill="#f7f7f7"/>
+    <circle cx="158" cy="133" r="14" fill="#111"/>
+    <circle cx="192" cy="133" r="14" fill="#f7f7f7"/>
+    <circle cx="124" cy="167" r="14" fill="#111"/>
+    <circle cx="158" cy="167" r="14" fill="#f7f7f7"/>
+    <circle cx="192" cy="167" r="14" fill="#f7f7f7"/>
+    <circle cx="90" cy="201" r="14" fill="#111"/>
   </g>
 </svg>

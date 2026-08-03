@@ -1,10 +1,24 @@
 /*
- * Board styling.
+ * The parts of the page that vary per game: boards, and the artwork on the
+ * home page cards. Generic card layout lives in the sass.
  *
  * Kept out of the sass build on purpose: boards size themselves from the
  * --cell-size custom property that templates/games/board.html emits, so a new
  * game declares `cell_size` in Python and needs no stylesheet changes at all.
  */
+
+/*
+ * One uniform box for every game's artwork, so a new game shipping a
+ * differently shaped SVG cannot change the height of its neighbours. 7/6
+ * matches the 350x300 viewBox the artwork uses; anything squarer just
+ * letterboxes slightly. `contain` rather than `cover` because these are
+ * diagrams of a board, and cropping one loses the part that explains the game.
+ */
+.games .card-img-top {
+  aspect-ratio: 7 / 6;
+  object-fit: contain;
+  background-color: #fff;
+}
 
 .board {
   --cell-size: 75px;

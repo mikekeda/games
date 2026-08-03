@@ -126,8 +126,8 @@ Two ways out, both a deliberate change rather than a rebuild:
   60% of the rules, so it needs a visual pass over every page.
 * Migrate `sass/_bootstrap.scss` and the templates to Bootstrap 5.
 
-Board styling deliberately lives in `static/css/board.css`, outside the sass
-build, so adding a game never depends on any of this.
+Board and card-artwork styling deliberately lives in `static/css/games.css`,
+outside the sass build, so adding a game never depends on any of this.
 
 Upgrade python packages
 -------
