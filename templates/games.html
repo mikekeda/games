@@ -6,13 +6,15 @@
 {% block content %}
   <div class="container">
     <div class="jumbotron bg-white games-container">
-      <h1 class="mb-5">My games:</h1>
-        {% for game in games %}
-          <div class="game-item col-md-3 mb-5">
-            <h2 class="mb-3"><a href="{% url 'core:game' game.game game.pk %}">{{ game.pk }}: {{ game.rules.title }}</a></h2>
-            {% include game.game|add:".html" %}
-          </div>
-        {% endfor %}
+      <h1 class="mb-5">{% trans "My games" %}:</h1>
+      {% for board in boards %}
+        <div class="game-item col-md-3 mb-5">
+          <h2 class="mb-3"><a href="{% url 'core:game' board.game.game board.game.pk %}">{{ board.game.pk }}: {{ board.rules.title }}</a></h2>
+          {% include board.board_template with rules=board.rules rows=board.rows cell_size=28 %}
+        </div>
+      {% empty %}
+        <p>{% trans "You have not played anything yet." %}</p>
+      {% endfor %}
     </div>
   </div>
 {% endblock content %}

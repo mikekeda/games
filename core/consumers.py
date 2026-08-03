@@ -1,56 +1,90 @@
+import logging
+
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
-from django.shortcuts import get_object_or_404
 
+from core.games import InvalidMove, Move
 from core.models import Game
+
+log = logging.getLogger(__name__)
 
 
 class WsGame(JsonWebsocketConsumer):
-    """WebsocketConsumer related to specific game."""
+    """Websocket for a single game."""
 
-    game_id = None
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.game_id = None
+        self.group_name = None
 
     def connect(self):
-        """Adds to specific 'game' group."""
-        self.game_id = int(self.scope["url_route"]["kwargs"].get("game_id"))
+        """Join the group for this game and send the current position."""
+        try:
+            self.game_id = int(self.scope["url_route"]["kwargs"]["game_id"])
+        except (KeyError, TypeError, ValueError):
+            self.close()
+            return
 
-        async_to_sync(self.channel_layer.group_add)(
-            f"game-{str(self.game_id)}", self.channel_name
-        )
+        self.group_name = f"game-{self.game_id}"
+        async_to_sync(self.channel_layer.group_add)(self.group_name, self.channel_name)
         super().connect()
 
+        game = self.get_game()
+        if game is not None:
+            self.send_json(game.payload())
+
     def disconnect(self, code):
-        """Remove from specific 'game' group and close the webSocket."""
-        async_to_sync(self.channel_layer.group_discard)(
-            f"game-{str(self.game_id)}", self.channel_name
+        """Leave the group. Channels closes the socket itself."""
+        if self.group_name:
+            async_to_sync(self.channel_layer.group_discard)(
+                self.group_name, self.channel_name
+            )
+
+    def get_game(self) -> Game | None:
+        """The game this socket is watching, if the user is a player in it."""
+        user = self.scope.get("user")
+        if user is None or not user.is_authenticated:
+            return None
+
+        return (
+            Game.objects.filter(pk=self.game_id, players=user)
+            .prefetch_related("players")
+            .first()
         )
-        self.close()
 
     def receive_json(self, content, **kwargs):
-        if "move" in content:
-            user = self.scope.get("user")
-            game = get_object_or_404(
-                Game.objects.prefetch_related("players"), pk=self.game_id, players=user
-            )
-            players = list(game.players.order_by("gameplayers__order"))
-            player_index = players.index(user)
-            move = content.get("move").split("-")
-            game.board = game.rules.move(
-                game.board, player_index, int(move[0]), int(move[1])
-            )
+        if not isinstance(content, dict) or "move" not in content:
+            return
 
-            bot_index = None
-            for i, player in enumerate(players):
-                if player.username == "bot":
-                    bot_index = i
-                    break
+        game = self.get_game()
+        if game is None:
+            self.send_json({"error": "You are not a player in this game."})
+            return
 
-            # If bot in the game - make it move.
-            if bot_index is not None:
-                game.board = game.rules.bot_move(game.board, bot_index)
+        try:
+            move = Move.parse(content["move"])
+        except InvalidMove:
+            self.send_json({"error": "Could not read that move."})
+            return
 
-            game.save()
+        players = game.ordered_players()
+        try:
+            player = players.index(self.scope["user"])
+        except ValueError:
+            self.send_json({"error": "You are not a player in this game."})
+            return
+
+        try:
+            game.play(player, move)
+        except InvalidMove:
+            # Re-send the authoritative position so a client that guessed wrong
+            # snaps back into sync.
+            self.send_json(game.payload())
+        # Last line of defence: a bug in a game must not take the socket down.
+        except Exception:  # pylint: disable=broad-exception-caught
+            log.exception("Failed to play move %s in game %s", move, self.game_id)
+            self.send_json({"error": "Something went wrong playing that move."})
 
     def game_update(self, message):
-        """Message binding."""
+        """Fan-out handler for `game.update` group messages."""
         self.send_json(message["content"])

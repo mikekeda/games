@@ -1,0 +1,14 @@
+{% load core_tags %}
+{% comment %}
+  Generic board. Any grid game renders with this; a game only needs its own
+  templates/games/<slug>.html if this cannot draw it.
+{% endcomment %}
+<table class="board {{ rules.slug }}" data-move-style="{{ rules.move_style }}" style="--cell-size: {{ cell_size|default:rules.cell_size }}px">
+  {% for row, cells in rows|board_rows:rules.flip_board %}
+    <tr>
+      {% for col, value in cells %}
+        <td data-row="{{ row }}" data-col="{{ col }}">{{ value }}</td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+</table>

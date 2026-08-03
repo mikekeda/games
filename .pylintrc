@@ -1,23 +1,20 @@
 [MASTER]
 persistent=yes
 ignore=south_migrations,migrations
-cache-size=500
+# Without this pylint cannot see attributes Django generates (managers,
+# reverse relations, `<fk>_id`) and reports them as no-member errors.
+load-plugins=pylint_django
+django-settings-module=games.settings
 
 [MESSAGES CONTROL]
 # C0111 Missing docstring
 # I0011 Warning locally suppressed using disable-msg
-# I0012 Warning locally suppressed using disable-msg
-# W0704 Except doesn't do anything Used when an except clause does nothing but "pass" and there is no "else" clause
-# W0142 Used * or * magic* Used when a function or method is called using *args or **kwargs to dispatch arguments.
 # W0212 Access to a protected member %s of a client class
-# W0232 Class has no __init__ method Used when a class has no __init__ method, neither its parent classes.
 # W0613 Unused argument %r Used when a function or method argument is not used.
 # W0702 No exception's type specified Used when an except clause doesn't specify exceptions type to catch.
-# R0201 Method could be a function
-# C1001 Used when a class is defined that does not inherit from anotherclass and does not inherit explicitly from "object".
 # C0103 Invalid module name
 # R0901 Used when class has too many parent classes, try to reduce this to get a simpler (and so easier to use) class.
-disable=C0111,I0011,I0012,W0704,W0142,W0212,W0232,W0613,W0702,R0201,C1001,C0103,R0901
+disable=C0111,I0011,W0212,W0613,W0702,C0103,R0901
 
 [REPORTS]
 msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}
@@ -71,6 +68,7 @@ indent-string='    '
 
 [DESIGN]
 max-args=10
+max-positional-arguments=10
 max-locals=15
 max-returns=6
 max-branches=12

@@ -3,6 +3,8 @@ Django settings for games project.
 """
 
 import os
+import sys
+
 import requests
 from django.utils.log import DEFAULT_LOGGING as LOGGING
 
@@ -44,6 +46,28 @@ def get_env_var(name: str, default: str = "") -> str:
     return default
 
 
+#: Values that mean "off". Anything else non-empty means "on".
+FALSY = {"", "0", "false", "no", "off"}
+
+#: Distinguishes "not configured anywhere" from "configured as an empty string",
+#: which the deployment uses to mean False.
+_UNSET = "\x00unset"
+
+
+def get_bool_env_var(name: str, default: bool = False) -> bool:
+    """Read a boolean setting.
+
+    ``bool("False")`` is ``True``, so the raw value is compared against known
+    falsy words instead of being coerced -- otherwise ``GAMES_DEBUG=False``
+    would switch debug on rather than off.
+    """
+    raw = get_env_var(name, _UNSET)
+    if raw == _UNSET:
+        return default
+
+    return raw.strip().lower() not in FALSY
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -56,7 +80,9 @@ SECRET_KEY = get_env_var(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(get_env_var("DEBUG", "True"))
+DEBUG = get_bool_env_var("DEBUG", default=True)
+
+TESTING = "test" in sys.argv
 
 INTERNAL_IPS = ("127.0.0.1",)
 
@@ -75,6 +101,9 @@ ADMINS = [("Mike", "mriynuk@gmail.com")]
 # Application definition
 
 INSTALLED_APPS = [
+    # Must come first: it swaps runserver for an ASGI server, without which
+    # websockets 404 in development.
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -171,7 +200,9 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 
 # Security
-if not DEBUG:
+# Redirecting to https turns every test client request into a 301, so the
+# hardening is skipped while the suite runs.
+if not DEBUG and not TESTING:
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
     SECURE_CONTENT_TYPE_NOSNIFF = True

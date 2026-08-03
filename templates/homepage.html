@@ -9,22 +9,26 @@
     <div class="games jumbotron bg-white">
     {% for game in games %}
       <div class="card">
-        <img class="card-img-top" src="{% static 'img/'|add:game.classname|add:'.svg' %}" alt="Card image cap">
+        <img class="card-img-top" src="{% static 'img/'|add:game.slug|add:'.svg' %}" alt="{{ game.title }}">
         <div class="card-body">
           <h5 class="card-title">
-            <a class="text-dark" href="{% url 'core:new_game' game.classname %}">{% trans game.title %}</a>
+            <a class="text-dark" href="{% url 'core:new_game' game.slug %}">{% trans game.title %}</a>
           </h5>
           <p class="card-text">{% trans game.description %}</p>
-          <form action="{% url 'core:new_game' game.classname %}" method="post">
-            {% csrf_token %}
-            <label for="{{ game.classname }}-opponent">{% trans "Opponent" %}</label>
-            <select id="{{ game.classname }}-opponent" name="opponent" class="form-control">
-              {% for opponent in users %}
-                <option value="{{ opponent.pk }}">{{ opponent.username }}</option>
-              {% endfor %}
-            </select>
-            <button type="submit" class="btn btn-primary float-right mt-2">{% trans "Play" %}</button>
-          </form>
+          {% if user.is_authenticated %}
+            <form action="{% url 'core:new_game' game.slug %}" method="post">
+              {% csrf_token %}
+              <label for="{{ game.slug }}-opponent">{% trans "Opponent" %}</label>
+              <select id="{{ game.slug }}-opponent" name="opponent" class="form-control">
+                {% for opponent in users %}
+                  <option value="{{ opponent.pk }}">{{ opponent.username }}</option>
+                {% endfor %}
+              </select>
+              <button type="submit" class="btn btn-primary float-right mt-2">{% trans "Play" %}</button>
+            </form>
+          {% else %}
+            <a class="btn btn-primary float-right mt-2" href="{% url 'core:login' %}?next={% url 'core:new_game' game.slug %}">{% trans "Log in to play" %}</a>
+          {% endif %}
         </div>
       </div>
     {% endfor %}

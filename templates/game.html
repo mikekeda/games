@@ -1,62 +1,27 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load i18n %}
 
-{% block title %}{{ game.game }}{% endblock title %}
+{% block title %}{{ rules.title }}{% endblock title %}
 
 {% block content %}
   <div class="container">
     <div class="jumbotron bg-white">
-      <h1 class="mb-4">{{ game.pk }}: <a class="text-dark" href="{% url 'core:new_game' game.game %}">{{ game.rules.title }}</a> ({{ players|join:" vs " }})</h1>
-      {% include game.game|add:".html" %}
+      <h1 class="mb-4">{{ game.pk }}: <a class="text-dark" href="{% url 'core:new_game' rules.slug %}">{{ rules.title }}</a> ({{ players|join:" vs " }})</h1>
+      {% include board_template %}
       <div id="info" class="mt-2 text-muted h4">
         <p class="waiting" style="{% if winner != None %}display: none;{% endif %}">{% trans "Waiting for" %} <a id="who_is_going_to_move" href="#">{{ user_turn }}</a> {% trans "move" %}</p>
-        <p class="draft" style="{% if winner != -1 %}display: none;{% endif %}">{% trans "It's a draft. Game is over!" %}</p>
+        <p class="draw" style="{% if winner != -1 %}display: none;{% endif %}">{% trans "It's a draw. Game is over!" %}</p>
         <p class="winner" style="{% if winner == None or winner == -1 %}display: none;{% endif %}"><a id="winner" href="#">{{ winner }}</a> {% trans "win! Game is over!" %}</p>
+        <p class="error text-danger" style="display: none;"></p>
       </div>
     </div>
   </div>
 {% endblock content %}
 
 {% block script %}
-  <script>
-    let protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-    let socket = new WebSocket(protocol + '://' + window.location.host + '/ws/game/' + {{ game.id }});
-    let players = {{ players|safe }};
-    let $board = $('table.board');
-    let $info = $('#info');
-    let i;
-    let j;
-
-    $board.find('td:empty').click(function() {
-      socket.send(JSON.stringify({
-        move: this.id
-      }));
-    });
-
-    socket.onmessage = function message(event) {
-      let raw_data = JSON.parse(event.data);
-      for (i = 0; i < raw_data.board.length; i++) {
-        for (j = 0; j < raw_data.board[i].length; j++) {
-          $board.find('td#' + i + '-' + j).html(raw_data.board[i][j]);
-        }
-      }
-
-      $info.children('p').hide();
-      if (raw_data.winner === null) {
-        $info.find('#who_is_going_to_move').text(players[raw_data.turn]);
-        $info.children('p.waiting').show();
-      }
-      else if (raw_data.winner === -1) {
-        $info.children('p.draft').show();
-      }
-      else {
-        $info.find('#winner').text(players[raw_data.winner]);
-        $info.children('p.winner').show();
-      }
-    };
-
-    if (socket.readyState === WebSocket.OPEN) {
-      socket.onopen();
-    }
-  </script>
+  {{ players|json_script:"game-players" }}
+  {{ seat|json_script:"game-seat" }}
+  {{ game.pk|json_script:"game-id" }}
+  <script src="{% static 'js/game.js' %}"></script>
 {% endblock script %}

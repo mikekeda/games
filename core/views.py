@@ -3,33 +3,53 @@ from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
+from django.template.loader import select_template
 from django.views import View
 from django.urls import reverse
 
-import core.games
-
-from core.models import Game, GamePlayers
+from core.games import games_info, get_game
+from core.models import BOT_USERNAME, Game, GamePlayers
 
 User = get_user_model()
+
+
+def opponents_for(user):
+    """Users that ``user`` can start a game against, bot first."""
+    if not user.is_authenticated:
+        return []
+
+    return sorted(
+        User.objects.exclude(pk=user.pk)
+        .filter(is_active=True)
+        .values_list("username", "pk", named=True),
+        key=lambda candidate: (
+            candidate.username != BOT_USERNAME,
+            candidate.username.lower(),
+        ),
+    )
+
+
+def board_template(rules):
+    """The board partial for a game, falling back to the generic grid.
+
+    A game only needs its own template if the generic one cannot draw it.
+    """
+    return select_template(
+        [f"games/{rules.slug}.html", "games/board.html"]
+    ).template.name
 
 
 class HomeView(View):
     # noinspection PyMethodMayBeStatic
     def get(self, request):
         """Home page."""
-        users = list(
-            User.objects.exclude(id=request.user.pk).values_list(
-                "username", "pk", named=True
-            )
-        )
-
-        # Bot should be first.
-        users.sort(key=lambda x: x.username == "bot", reverse=True)
-
         return render(
-            request, "homepage.html", {"games": core.games.GAMES_INFO, "users": users}
+            request,
+            "homepage.html",
+            {"games": games_info(), "users": opponents_for(request.user)},
         )
 
 
@@ -37,31 +57,39 @@ class GamesView(LoginRequiredMixin, View):
     # noinspection PyMethodMayBeStatic
     def get(self, request, name):
         """Game page."""
-        game_class = getattr(core.games, name, None)
-        if game_class is None:
+        rules = get_game(name)
+        if rules is None:
             raise Http404
 
-        users = User.objects.exclude(id=request.user.pk).values_list(
-            "username", "pk", named=True
+        return render(
+            request,
+            "homepage.html",
+            {"games": [rules.info()], "users": opponents_for(request.user)},
         )
-
-        games = [game for game in core.games.GAMES_INFO if game["classname"] == name]
-
-        return render(request, "homepage.html", {"games": games, "users": users})
 
     # noinspection PyMethodMayBeStatic
     def post(self, request, name):
         """New game."""
-        game_class = getattr(core.games, name, None)
-        if game_class is None:
+        rules = get_game(name)
+        if rules is None:
             raise Http404
 
-        post_object = request.POST.copy()
-        opponent = post_object.pop("opponent", [None])[0]
-        game = Game(game=name)
-        game.save()
-        GamePlayers(game=game, user=request.user, order=0).save()
-        GamePlayers(game=game, user_id=opponent, order=1).save()
+        try:
+            opponent_id = int(request.POST.get("opponent", ""))
+        except (TypeError, ValueError) as exc:
+            raise Http404("Pick an opponent to play against.") from exc
+
+        opponent = User.objects.filter(pk=opponent_id, is_active=True).first()
+        if opponent is None or opponent == request.user:
+            raise Http404("Pick an opponent to play against.")
+
+        # A game with empty seats is unplayable, so the row and both seats are
+        # written together or not at all.
+        with transaction.atomic():
+            game = Game(game=name)
+            game.save()
+            GamePlayers(game=game, user=request.user, order=0).save()
+            GamePlayers(game=game, user=opponent, order=1).save()
 
         return redirect(reverse("core:game", args=(game.game, game.pk)))
 
@@ -70,40 +98,66 @@ class GameView(LoginRequiredMixin, View):
     # noinspection PyMethodMayBeStatic
     def get(self, request, name, pk):
         """Game page."""
-        game_class = getattr(core.games, name, None)
-        if game_class is None:
+        rules = get_game(name)
+        if rules is None:
             raise Http404
 
-        game = get_object_or_404(Game, pk=pk)
-        players = [
-            user.username for user in game.players.order_by("gameplayers__order")
-        ]
-        user_turn = players[game.rules.who_is_going_to_move(game.board)]
-        winner = game.rules.who_is_winner(game.board)
-        game.board = game.rules.render_board(game.board)
+        game = get_object_or_404(
+            Game.objects.prefetch_related("players"), pk=pk, game=name
+        )
+        players = [user.username for user in game.ordered_players()]
+        outcome = game.rules.outcome(game.state)
+
+        if outcome is None:
+            winner = None
+        elif outcome.is_draw:
+            winner = -1
+        else:
+            winner = players[outcome.winner]
 
         return render(
             request,
             "game.html",
             {
                 "game": game,
+                "rules": rules,
+                "rows": game.rules.render(game.state),
+                "board_template": board_template(rules),
                 "players": players,
-                "user_turn": user_turn,
-                "winner": players[winner] if winner not in (None, -1) else winner,
+                "seat": (
+                    players.index(request.user.username)
+                    if request.user.username in players
+                    else None
+                ),
+                "user_turn": players[game.current_turn],
+                "winner": winner,
             },
         )
 
 
 @login_required
 def my_games(request, name=None):
-    games = Game.objects.filter(players=request.user).order_by("-id")
+    games = (
+        Game.objects.filter(players=request.user)
+        .prefetch_related("players")
+        .order_by("-id")
+    )
     if name:
+        if get_game(name) is None:
+            raise Http404
         games = games.filter(game=name)
 
-    for game in games:
-        game.board = game.rules.render_board(game.board)
+    boards = [
+        {
+            "game": game,
+            "rules": game.rules,
+            "rows": game.rules.render(game.state),
+            "board_template": board_template(game.rules),
+        }
+        for game in games
+    ]
 
-    return render(request, "games.html", {"games": games})
+    return render(request, "games.html", {"boards": boards})
 
 
 def about_page(request):

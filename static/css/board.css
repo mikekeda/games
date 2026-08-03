@@ -1,0 +1,47 @@
+/*
+ * Board styling.
+ *
+ * Kept out of the sass build on purpose: boards size themselves from the
+ * --cell-size custom property that templates/games/board.html emits, so a new
+ * game declares `cell_size` in Python and needs no stylesheet changes at all.
+ */
+
+.board {
+  --cell-size: 75px;
+  border-collapse: collapse;
+}
+
+.board td {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  font-size: calc(var(--cell-size) * 0.66);
+  line-height: calc(var(--cell-size) * 0.8);
+  text-align: center;
+  vertical-align: middle;
+  border: 1px solid grey;
+  padding: 0;
+  transition: background-color 0.15s ease-in-out;
+}
+
+/* Only hint at clickability when the player can actually move. */
+.board.your-turn td:empty:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+}
+
+.board td.selected {
+  background-color: rgba(13, 110, 253, 0.25);
+}
+
+.board td.target {
+  box-shadow: inset 0 0 0 3px rgba(13, 110, 253, 0.5);
+  cursor: pointer;
+}
+
+.board td.win {
+  background-color: rgba(25, 135, 84, 0.25);
+}
+
+.board.disconnected {
+  opacity: 0.5;
+}
