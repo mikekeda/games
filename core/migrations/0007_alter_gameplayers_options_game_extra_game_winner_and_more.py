@@ -3,6 +3,37 @@
 import core.games.registry
 import django.db.models.deletion
 from django.db import migrations, models
+from django.db.models import Count, F
+
+
+def renumber_clashing_seats(apps, schema_editor):
+    """Give every seat in a game a distinct order.
+
+    ``order`` defaulted to 0 with nothing stopping two players sharing it, so
+    games created before this migration can have several players in seat 0.
+    The unique constraint added below cannot be built until they are separated.
+
+    Only games that actually clash are touched. Their seats keep the relative
+    order they already had, ties broken by primary key -- which is the order
+    the players were seated, and the order the database was already handing
+    them back -- so nobody swaps sides in a game that is still being played.
+    """
+    GamePlayers = apps.get_model("core", "GamePlayers")
+
+    clashing = (
+        GamePlayers.objects.values("game")
+        .annotate(seats=Count("id"), orders=Count("order", distinct=True))
+        .filter(seats__gt=F("orders"))
+        .values_list("game", flat=True)
+    )
+
+    for game_id in list(clashing):
+        seats = GamePlayers.objects.filter(game=game_id).order_by("order", "id")
+        for position, seat in enumerate(seats):
+            if seat.order != position:
+                # update() rather than save(): the historical model has no
+                # custom save, but this also skips signals and validation.
+                GamePlayers.objects.filter(pk=seat.pk).update(order=position)
 
 
 class Migration(migrations.Migration):
@@ -36,6 +67,11 @@ class Migration(migrations.Migration):
             field=models.CharField(
                 choices=core.games.registry.game_choices, max_length=32
             ),
+        ),
+        # Must run before the constraint below, or legacy duplicates break it.
+        migrations.RunPython(
+            renumber_clashing_seats,
+            migrations.RunPython.noop,
         ),
         migrations.AlterUniqueTogether(
             name="gameplayers",
