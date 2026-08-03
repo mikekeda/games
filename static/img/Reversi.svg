@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg preserveAspectRatio="none" version="1.1" viewBox="0 0 350 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="350" height="300" fill="#fff"/>
+  <rect x="55" y="30" width="240" height="240" fill="#1f7a4d"/>
+  <g stroke="#145636" stroke-width="2">
+    <path d="M55 30h240M55 60h240M55 90h240M55 120h240M55 150h240M55 180h240M55 210h240M55 240h240M55 270h240"/>
+    <path d="M55 30v240M85 30v240M115 30v240M145 30v240M175 30v240M205 30v240M235 30v240M265 30v240M295 30v240"/>
+  </g>
+  <g stroke="#145636" stroke-width="1.5">
+    <circle cx="160" cy="105" r="12" fill="#111"/>
+    <circle cx="130" cy="135" r="12" fill="#f7f7f7"/>
+    <circle cx="160" cy="135" r="12" fill="#f7f7f7"/>
+    <circle cx="190" cy="135" r="12" fill="#111"/>
+    <circle cx="160" cy="165" r="12" fill="#111"/>
+    <circle cx="190" cy="165" r="12" fill="#f7f7f7"/>
+    <circle cx="220" cy="165" r="12" fill="#111"/>
+    <circle cx="190" cy="195" r="12" fill="#f7f7f7"/>
+  </g>
+</svg>

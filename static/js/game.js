@@ -27,6 +27,7 @@
   var seat = config('game-seat', null);
   var gameId = config('game-id', null);
   var moveStyle = board.dataset.moveStyle || 'place';
+  var showMoves = board.dataset.showMoves === '1';
 
   var info = document.getElementById('info');
   var selected = null;
@@ -159,6 +160,26 @@
     var yourTurn = seat !== null && data.turn === seat && data.winner === null;
     board.classList.toggle('your-turn', yourTurn);
     board.classList.toggle('waiting', !yourTurn);
+    return yourTurn;
+  }
+
+  // Games where the playable squares are not obvious ask for them to be
+  // marked. Reversi is unreadable without it; tic-tac-toe would just be noise.
+  function markLegal(yourTurn) {
+    board.querySelectorAll('td.legal').forEach(function (td) {
+      td.classList.remove('legal');
+    });
+
+    if (!showMoves || !yourTurn) {
+      return;
+    }
+
+    legalMoves.forEach(function (move) {
+      var td = cell(move.to[0], move.to[1]);
+      if (td) {
+        td.classList.add('legal');
+      }
+    });
   }
 
   socket.onmessage = function (event) {
@@ -173,7 +194,7 @@
     clearSelection();
     render(data);
     updateStatus(data);
-    setTurnState(data);
+    markLegal(setTurnState(data));
   };
 
   socket.onclose = function () {

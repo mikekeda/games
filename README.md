@@ -11,6 +11,7 @@ Available Games
 ------------
 -   **Tic-tac-toe** - Game for two players, X and O, who take turns marking the spaces in a 3×3 grid.
 -   **Connect four** - Two players drop discs into a seven-column, six-row grid and try to line up four.
+-   **Reversi** - Trap lines of your opponent's discs on an 8x8 board to flip them, and hold the most discs at the end.
 
 Adding a game
 ------------

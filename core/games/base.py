@@ -185,6 +185,10 @@ class Game(ABC):
     #: Render row 0 at the bottom (games where pieces stack upwards).
     flip_board: bool = False
     move_style: str = MoveStyle.PLACE
+    #: Mark the playable squares for the player to move. Off by default: it is
+    #: noise in a game where every empty square is legal, and the point of
+    #: games like reversi, where they are not obvious at all.
+    show_legal_moves: bool = False
     #: Square size in pixels. The board stylesheet reads this, so a new game
     #: needs no CSS of its own.
     cell_size: int = 75

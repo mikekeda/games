@@ -116,6 +116,20 @@ class GameModelTest(TestCase):
         self.assertEqual(len(filled), 2)
         self.assertEqual(game.current_turn, 0)
 
+    def test_reversi_bot_replies(self):
+        # Reversi is the first game where the turn does not simply alternate,
+        # so _play_bots has to cope with the bot passing or moving twice.
+        game = self.make_game(slug="Reversi", opponent=self.bot)
+        game.play(0, Move(2, 3))
+
+        game.refresh_from_db()
+        filled = [cell for row in game.board for cell in row if cell != "*"]
+
+        # Four discs to start, one placed, one flipped, then white replies.
+        self.assertGreaterEqual(len(filled), 6)
+        self.assertEqual(game.current_turn, 0)
+        self.assertEqual(game.moves.count(), 2)
+
     def test_payload_describes_the_position(self):
         game = self.make_game()
         payload = game.payload()

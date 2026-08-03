@@ -42,6 +42,16 @@
   background-color: rgba(25, 135, 84, 0.25);
 }
 
+/* Playable squares, for games that opt in with show_legal_moves. A gradient
+   rather than a child element so it centres regardless of cell size. */
+.board td.legal {
+  background-image: radial-gradient(
+    circle,
+    rgba(13, 110, 253, 0.35) 18%,
+    transparent 19%
+  );
+}
+
 .board.disconnected {
   opacity: 0.5;
 }
