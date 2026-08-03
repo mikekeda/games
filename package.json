@@ -1,12 +1,11 @@
 {
   "name": "games",
-  "version": "0.0.3",
-  "description": "We use gulp to compile sass to css.",
-  "main": "compile.js",
+  "version": "0.0.4",
+  "description": "Compiles the site's sass to css.",
   "dependencies": {
-    "autoprefixer": "^8.6.5",
-    "node-sass": "^4.14.1",
-    "postcss-cli": "^5.0.1"
+    "autoprefixer": "^10.4.21",
+    "postcss-cli": "^11.0.1",
+    "sass": "^1.93.2"
   },
   "devDependencies": {},
   "watches": {
@@ -14,8 +13,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "node-sass -wr sass/style.scss -o static/css/ --output-style compressed",
-    "build:postcss": "postcss -wr static/css/ autoprefixer -b 'last 2 versions'",
+    "build:css": "sass --load-path=static/node_modules --style=compressed --no-source-map sass/style.scss static/css/style.css",
+    "build:postcss": "postcss static/css/style.css --use autoprefixer --replace --no-map",
+    "watch:css": "npm run build:css -- --watch",
     "start": "npm run build:css && npm run build:postcss"
   },
   "author": "Mike",

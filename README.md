@@ -104,6 +104,30 @@ Running
     # DEBUG defaults to on locally. Set it explicitly to turn it off:
     GAMES_DEBUG=0 python manage.py runserver
 
+Rebuilding the stylesheet
+-------
+    cd static && npm install   # bootstrap and jquery
+    npm install                # dart-sass, postcss
+    npm start
+
+**The sass build is currently broken, and `npm start` overwrites
+`static/css/style.css` with an error stylesheet.** The vendored
+`static/node_modules/bootstrap` is 5.3.3, while `sass/_bootstrap.scss` imports
+partials that Bootstrap 5 removed (`jumbotron`, `media`, `custom-forms`,
+`print`) and the templates still use Bootstrap 4 markup. The committed
+`static/css/style.css` is Bootstrap 4.0.0 output and is what the site serves,
+so keep a copy before running the build.
+
+Two ways out, both a deliberate change rather than a rebuild:
+
+* Build against Bootstrap 4 (`npm install --no-save bootstrap@4.6.2` and point
+  `--load-path` at `node_modules`). This works, but 4.0 to 4.6 rewrites roughly
+  60% of the rules, so it needs a visual pass over every page.
+* Migrate `sass/_bootstrap.scss` and the templates to Bootstrap 5.
+
+Board styling deliberately lives in `static/css/board.css`, outside the sass
+build, so adding a game never depends on any of this.
+
 Upgrade python packages
 -------
     # Remove versions from requirements.txt
