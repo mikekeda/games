@@ -36,9 +36,7 @@ class WsGame(JsonWebsocketConsumer):
     def disconnect(self, code):
         """Leave the group. Channels closes the socket itself."""
         if self.group_name:
-            async_to_sync(self.channel_layer.group_discard)(
-                self.group_name, self.channel_name
-            )
+            async_to_sync(self.channel_layer.group_discard)(self.group_name, self.channel_name)
 
     def get_game(self) -> Game | None:
         """The game this socket is watching, if the user is a player in it."""
@@ -46,11 +44,7 @@ class WsGame(JsonWebsocketConsumer):
         if user is None or not user.is_authenticated:
             return None
 
-        return (
-            Game.objects.filter(pk=self.game_id, players=user)
-            .prefetch_related("players")
-            .first()
-        )
+        return Game.objects.filter(pk=self.game_id, players=user).prefetch_related("players").first()
 
     def receive_json(self, content, **kwargs):
         if not isinstance(content, dict) or "move" not in content:

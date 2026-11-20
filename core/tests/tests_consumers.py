@@ -27,9 +27,7 @@ class WsGameTest(TransactionTestCase):
         GamePlayers(game=self.game, user=self.bob, order=1).save()
 
     def communicator(self, user):
-        communicator = WebsocketCommunicator(
-            WsGame.as_asgi(), f"/ws/game/{self.game.pk}"
-        )
+        communicator = WebsocketCommunicator(WsGame.as_asgi(), f"/ws/game/{self.game.pk}")
         communicator.scope["url_route"] = {"kwargs": {"game_id": str(self.game.pk)}}
         communicator.scope["user"] = user
         return communicator
@@ -87,9 +85,7 @@ class WsGameTest(TransactionTestCase):
         self.assertEqual(payload["board"][0][0], "")
         self.assertEqual(payload["turn"], 0)
 
-        board = await database_sync_to_async(
-            lambda: Game.objects.get(pk=self.game.pk).board
-        )()
+        board = await database_sync_to_async(lambda: Game.objects.get(pk=self.game.pk).board)()
         self.assertEqual(board, [["*"] * 3] * 3)
 
         await bob.disconnect()
@@ -117,9 +113,7 @@ class WsGameTest(TransactionTestCase):
         await alice.disconnect()
 
     async def test_a_stranger_cannot_move(self):
-        mallory = await database_sync_to_async(User.objects.create_user)(
-            username="mallory", password="pw"
-        )
+        mallory = await database_sync_to_async(User.objects.create_user)(username="mallory", password="pw")
         communicator = await self.connect(mallory)
 
         # Not a player, so no position is pushed on connect.
@@ -129,9 +123,7 @@ class WsGameTest(TransactionTestCase):
         payload = await communicator.receive_json_from()
         self.assertIn("error", payload)
 
-        board = await database_sync_to_async(
-            lambda: Game.objects.get(pk=self.game.pk).board
-        )()
+        board = await database_sync_to_async(lambda: Game.objects.get(pk=self.game.pk).board)()
         self.assertEqual(board, [["*"] * 3] * 3)
 
         await communicator.disconnect()

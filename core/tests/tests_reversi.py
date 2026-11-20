@@ -92,9 +92,7 @@ class ReversiRulesTest(SimpleTestCase):
     def test_a_line_must_be_closed_to_count(self):
         # X . O O . . . .  -- the run of O is open at the far end.
         state = GameState(
-            board=board_from(
-                ["X.OO....", EMPTY_ROW, EMPTY_ROW, EMPTY_ROW] + [EMPTY_ROW] * 4
-            ),
+            board=board_from(["X.OO....", EMPTY_ROW, EMPTY_ROW, EMPTY_ROW] + [EMPTY_ROW] * 4),
             turn=0,
         )
 

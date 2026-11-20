@@ -97,9 +97,7 @@ class NegamaxBot(Bot):
             if outcome.is_draw:
                 return 0.0
             # Prefer quick wins and slow losses so the bot finishes games off.
-            return (
-                (WIN_SCORE + depth) if outcome.winner == mover else -(WIN_SCORE + depth)
-            )
+            return (WIN_SCORE + depth) if outcome.winner == mover else -(WIN_SCORE + depth)
 
         if depth <= 0:
             return game.heuristic(state, mover)
@@ -110,9 +108,7 @@ class NegamaxBot(Bot):
 
         best = -float("inf")
         for move in moves:
-            score = -cls._search(
-                game, game.apply(state, mover, move), depth - 1, -beta, -alpha
-            )
+            score = -cls._search(game, game.apply(state, mover, move), depth - 1, -beta, -alpha)
             best = max(best, score)
             alpha = max(alpha, score)
             if alpha >= beta:

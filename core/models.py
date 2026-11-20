@@ -113,11 +113,7 @@ class Game(models.Model):
 
     def _play_bots(self, state: GameState) -> GameState:
         """Let bot-controlled seats move until it is a human's turn again."""
-        bot_seats = {
-            index
-            for index, user in enumerate(self.ordered_players())
-            if user.username == BOT_USERNAME
-        }
+        bot_seats = {index for index, user in enumerate(self.ordered_players()) if user.username == BOT_USERNAME}
         if not bot_seats or self.rules.bot is None:
             return state
 
@@ -169,9 +165,7 @@ class Game(models.Model):
         last = GameMove.objects.filter(game=self).aggregate(last=Max("number"))["last"]
         start = 0 if last is None else last + 1
         GameMove.objects.bulk_create(
-            GameMove(
-                game=self, player=player, number=start + offset, move=move.serialize()
-            )
+            GameMove(game=self, player=player, number=start + offset, move=move.serialize())
             for offset, (player, move) in enumerate(pending)
         )
         self._pending_moves = []
@@ -195,9 +189,7 @@ class Game(models.Model):
             "turn": self.current_turn,
             # -1 means a draw; null means the game is still running. Kept for
             # compatibility with the existing client.
-            "winner": (
-                None if outcome is None else (-1 if outcome.is_draw else outcome.winner)
-            ),
+            "winner": (None if outcome is None else (-1 if outcome.is_draw else outcome.winner)),
             "reason": outcome.reason if outcome else "",
             "highlight": [list(cell) for cell in outcome.cells] if outcome else [],
             "moves": [move.serialize() for move in self.rules.legal_moves(state)],
@@ -231,9 +223,7 @@ class GamePlayers(models.Model):
             taken = taken.exclude(pk=self.pk)
 
         if taken.count() >= self.game.rules.player_count:
-            raise ValidationError(
-                f"You need {self.game.rules.player_count} players to play this game"
-            )
+            raise ValidationError(f"You need {self.game.rules.player_count} players to play this game")
 
         return super().save(*args, **kwargs)
 

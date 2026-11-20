@@ -332,9 +332,7 @@ class GridGame(Game):
         return [[cls.render_map.get(cell, cell) for cell in row] for row in state.board]
 
     @classmethod
-    def find_line(
-        cls, board: list[list[str]], length: int
-    ) -> tuple[str, tuple[tuple[int, int], ...]] | None:
+    def find_line(cls, board: list[list[str]], length: int) -> tuple[str, tuple[tuple[int, int], ...]] | None:
         """Find ``length`` identical non-empty tokens in a row.
 
         Returns the token and the squares making up the line, or ``None``.
@@ -350,10 +348,7 @@ class GridGame(Game):
                 if not cls.in_bounds(end_row, end_col):
                     continue
 
-                line = tuple(
-                    (row + delta_row * step, col + delta_col * step)
-                    for step in range(length)
-                )
+                line = tuple((row + delta_row * step, col + delta_col * step) for step in range(length))
                 if all(board[r][c] == token for r, c in line):
                     return token, line
 
@@ -368,10 +363,7 @@ class GridGame(Game):
                 end_col = col + delta_col * (length - 1)
                 if not cls.in_bounds(end_row, end_col):
                     continue
-                yield tuple(
-                    (row + delta_row * step, col + delta_col * step)
-                    for step in range(length)
-                )
+                yield tuple((row + delta_row * step, col + delta_col * step) for step in range(length))
 
 
 class LineUpGame(GridGame):

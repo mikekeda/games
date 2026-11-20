@@ -18,12 +18,8 @@ class GamesViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.password = "testpass"
-        cls.test_user = User.objects.create_user(
-            username="testuser", password=cls.password
-        )
-        cls.test_admin = User.objects.create_user(
-            username="testadmin", password=cls.password
-        )
+        cls.test_user = User.objects.create_user(username="testuser", password=cls.password)
+        cls.test_admin = User.objects.create_user(username="testadmin", password=cls.password)
 
         cls.test_game = Game(game="TicTacToe")
         cls.test_game.save()
@@ -92,16 +88,12 @@ class GamesViewTest(TestCase):
     # Pages available only for registered users.
     def test_views_new_game(self):
         for rules in all_games():
-            resp = self.client.get(
-                reverse("core:new_game", kwargs={"name": rules.slug})
-            )
+            resp = self.client.get(reverse("core:new_game", kwargs={"name": rules.slug}))
             self.assertEqual(resp.status_code, 302)
 
         self.login()
         for rules in all_games():
-            resp = self.client.get(
-                reverse("core:new_game", kwargs={"name": rules.slug})
-            )
+            resp = self.client.get(reverse("core:new_game", kwargs={"name": rules.slug}))
             self.assertEqual(resp.status_code, 200)
             self.assertTemplateUsed(resp, "homepage.html")
 
@@ -118,9 +110,7 @@ class GamesViewTest(TestCase):
         )
 
         game = Game.objects.latest("id")
-        self.assertRedirects(
-            resp, reverse("core:game", kwargs={"name": "TicTacToe", "pk": game.pk})
-        )
+        self.assertRedirects(resp, reverse("core:game", kwargs={"name": "TicTacToe", "pk": game.pk}))
         self.assertEqual(game.ordered_players(), [self.test_user, self.test_admin])
 
     def test_starting_a_game_needs_a_real_opponent(self):
@@ -149,31 +139,23 @@ class GamesViewTest(TestCase):
 
     def test_my_games_filtered_by_game(self):
         self.login()
-        resp = self.client.get(
-            reverse("core:my_specific_games", kwargs={"name": "ConnectFour"})
-        )
+        resp = self.client.get(reverse("core:my_specific_games", kwargs={"name": "ConnectFour"}))
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.context["boards"], [])
 
     def test_my_games_for_unknown_slug_is_404(self):
         self.login()
-        resp = self.client.get(
-            reverse("core:my_specific_games", kwargs={"name": "dummy"})
-        )
+        resp = self.client.get(reverse("core:my_specific_games", kwargs={"name": "dummy"}))
         self.assertEqual(resp.status_code, 404)
 
     def test_views_game(self):
-        url = reverse(
-            "core:game", kwargs={"name": self.test_game.game, "pk": self.test_game.pk}
-        )
+        url = reverse("core:game", kwargs={"name": self.test_game.game, "pk": self.test_game.pk})
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 302)
 
         self.login()
 
-        resp = self.client.get(
-            reverse("core:game", kwargs={"name": "not-exists", "pk": self.test_game.pk})
-        )
+        resp = self.client.get(reverse("core:game", kwargs={"name": "not-exists", "pk": self.test_game.pk}))
         self.assertEqual(resp.status_code, 404)
 
         resp = self.client.get(url)
@@ -184,11 +166,7 @@ class GamesViewTest(TestCase):
 
     def test_game_url_must_match_the_game(self):
         self.login()
-        resp = self.client.get(
-            reverse(
-                "core:game", kwargs={"name": "ConnectFour", "pk": self.test_game.pk}
-            )
-        )
+        resp = self.client.get(reverse("core:game", kwargs={"name": "ConnectFour", "pk": self.test_game.pk}))
         self.assertEqual(resp.status_code, 404)
 
     def test_board_renders_addressable_cells(self):

@@ -115,11 +115,7 @@ class Reversi(GridGame):
 
             # Only a run closed off by one of your own discs is captured; one
             # that runs off the board or into a gap is not.
-            if (
-                line
-                and cls.in_bounds(scan_row, scan_col)
-                and board[scan_row][scan_col] == token
-            ):
+            if line and cls.in_bounds(scan_row, scan_col) and board[scan_row][scan_col] == token:
                 captured.extend(line)
 
         return captured
@@ -128,19 +124,13 @@ class Reversi(GridGame):
     def moves_for(cls, board: list[list[str]], player: int) -> list[Move]:
         """Every move ``player`` could make on ``board``."""
         token = cls.tokens[player]
-        return [
-            Move(row, col)
-            for row, col in cls.empty_cells(board)
-            if cls.captures(board, row, col, token)
-        ]
+        return [Move(row, col) for row, col in cls.empty_cells(board) if cls.captures(board, row, col, token)]
 
     @classmethod
     def has_moves(cls, board: list[list[str]], player: int) -> bool:
         """Whether ``player`` can move at all. Stops at the first one it finds."""
         token = cls.tokens[player]
-        return any(
-            cls.captures(board, row, col, token) for row, col in cls.empty_cells(board)
-        )
+        return any(cls.captures(board, row, col, token) for row, col in cls.empty_cells(board))
 
     @classmethod
     def legal_moves(cls, state: GameState):
@@ -195,9 +185,7 @@ class Reversi(GridGame):
 
         # Usually the player to move has something, which settles it in one
         # scan. The board filling up is covered too: nobody can move then.
-        if cls.has_moves(board, state.turn) or cls.has_moves(
-            board, cls.opponent_of(state.turn)
-        ):
+        if cls.has_moves(board, state.turn) or cls.has_moves(board, cls.opponent_of(state.turn)):
             return None
 
         counts = cls.counts(board)
@@ -227,8 +215,6 @@ class Reversi(GridGame):
             elif board[row][col] == theirs:
                 score -= SQUARE_VALUES[row][col]
 
-        mobility = len(cls.moves_for(board, player)) - len(
-            cls.moves_for(board, opponent)
-        )
+        mobility = len(cls.moves_for(board, player)) - len(cls.moves_for(board, opponent))
 
         return score + MOBILITY_WEIGHT * mobility

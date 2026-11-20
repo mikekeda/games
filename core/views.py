@@ -22,9 +22,7 @@ def opponents_for(user):
         return []
 
     return sorted(
-        User.objects.exclude(pk=user.pk)
-        .filter(is_active=True)
-        .values_list("username", "pk", named=True),
+        User.objects.exclude(pk=user.pk).filter(is_active=True).values_list("username", "pk", named=True),
         key=lambda candidate: (
             candidate.username != BOT_USERNAME,
             candidate.username.lower(),
@@ -37,9 +35,7 @@ def board_template(rules):
 
     A game only needs its own template if the generic one cannot draw it.
     """
-    return select_template(
-        [f"games/{rules.slug}.html", "games/board.html"]
-    ).template.name
+    return select_template([f"games/{rules.slug}.html", "games/board.html"]).template.name
 
 
 class HomeView(View):
@@ -102,9 +98,7 @@ class GameView(LoginRequiredMixin, View):
         if rules is None:
             raise Http404
 
-        game = get_object_or_404(
-            Game.objects.prefetch_related("players"), pk=pk, game=name
-        )
+        game = get_object_or_404(Game.objects.prefetch_related("players"), pk=pk, game=name)
         players = [user.username for user in game.ordered_players()]
         outcome = game.rules.outcome(game.state)
 
@@ -124,11 +118,7 @@ class GameView(LoginRequiredMixin, View):
                 "rows": game.rules.render(game.state),
                 "board_template": board_template(rules),
                 "players": players,
-                "seat": (
-                    players.index(request.user.username)
-                    if request.user.username in players
-                    else None
-                ),
+                "seat": (players.index(request.user.username) if request.user.username in players else None),
                 "user_turn": players[game.current_turn],
                 "winner": winner,
             },
@@ -137,11 +127,7 @@ class GameView(LoginRequiredMixin, View):
 
 @login_required
 def my_games(request, name=None):
-    games = (
-        Game.objects.filter(players=request.user)
-        .prefetch_related("players")
-        .order_by("-id")
-    )
+    games = Game.objects.filter(players=request.user).prefetch_related("players").order_by("-id")
     if name:
         if get_game(name) is None:
             raise Http404

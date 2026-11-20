@@ -31,9 +31,7 @@ class ConnectFourTest(SimpleTestCase):
         position = state(board("X******", "*******"))
         targets = sorted(move.target for move in ConnectFour.legal_moves(position))
 
-        self.assertEqual(
-            targets, [(0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (1, 0)]
-        )
+        self.assertEqual(targets, [(0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (1, 0)])
 
     def test_full_column_offers_no_move(self):
         column = ["X******" if row % 2 == 0 else "O******" for row in range(6)]
@@ -46,9 +44,7 @@ class ConnectFourTest(SimpleTestCase):
         self.assertEqual(outcome.winner, 0)
 
     def test_vertical_win(self):
-        outcome = ConnectFour.outcome(
-            state(board("O******", "O******", "O******", "O******"))
-        )
+        outcome = ConnectFour.outcome(state(board("O******", "O******", "O******", "O******")))
         self.assertEqual(outcome.winner, 1)
 
     def test_diagonal_win(self):
